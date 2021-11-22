@@ -6,7 +6,7 @@
         <input 
           type="date"
           class="form-control"
-          v-model="timeEntry.date"
+          v-model="newtimeEntry.date"
           placeholder="Date"
         />
       </div>
@@ -15,7 +15,7 @@
         <input 
           type="number" 
           class="form-control"
-          v-model="timeEntry.totalTime"
+          v-model="newtimeEntry.totalTime"
           placeholder="Hours"
         />
       </div>      
@@ -26,12 +26,12 @@
         <input 
           type="text" 
           class="form-control"
-          v-model="timeEntry.comment"
+          v-model="newtimeEntry.comment"
           placeholder="Comment"
         />
       </div>        
     </div>    
-    <button class="btn btn-primary" @click="save()">Save</button>
+    <button class="btn btn-primary" @click="create()">Create</button>
     <router-link to="/time-entries" class="btn btn-danger" tag ="button">Cancel</router-link>  
     <hr>
   </div>
@@ -39,28 +39,29 @@
 </template>
 
 <script>
+
   export default {
     data () {
       return {
         // We default the user object on
         // the timeEntry to have some user details
-        timeEntry: {
-          user: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            image: ''
-          }
+        newtimeEntry: {
+            date: '',
+            totalTime: '',
+            comment: ''
+          
         }
       }
     },
     methods: {
-      save () {
-        let timeEntry = this.timeEntry
+      create  () {
+        this.$service.timeEntry.create(this.newtimeEntry).then((data) => {
+        //let timeEntry = this.timeEntry
         // We dispatch the timeEntry so it can be pushed
         // onto the timeEntries array in the parent component
-        this.$emit('timeUpdate', timeEntry)
-        this.timeEntry = {}
+        this.$emit('create', data)
+        this.newtimeEntry = {}
+        })
       }
     }
   }

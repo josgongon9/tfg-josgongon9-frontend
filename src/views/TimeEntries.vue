@@ -66,7 +66,22 @@
 <script>
   import LogTime from '../views/LogTime.vue'
   export default {
-    data () {
+    components: {
+    LogTime
+    
+  },
+
+  props: {
+    timeEntries: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+
+
+    /*data () {
       // We want to start with an existing time entry
       let existingEntry = {
         user: {
@@ -84,14 +99,14 @@
         // by placing it in the array
         timeEntries: [existingEntry]
       }
-    },
+    },*/
     methods: {
       // Get the index of the clicked time entry and splice it out
       deleteTimeEntry (timeEntry) {
         let index = this.timeEntries.indexOf(timeEntry)
         if (window.confirm('Are you sure you want to delete this time entry?')) {
           this.timeEntries.splice(index, 1)
-          this.$dispatch('deleteTime', timeEntry)
+          //this.$dispatch('deleteTime', timeEntry)
         }
       },
       timeUpdate (timeEntry) {
