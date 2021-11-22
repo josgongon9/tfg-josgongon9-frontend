@@ -20,6 +20,12 @@
         <li class="nav-item">
           <router-link v-if="currentUser" to="/time-entries" class="nav-link">Timer</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/tutorials" class="nav-link">Tutorials</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/add" class="nav-link">Add</router-link>
+        </li>
       </div>
 
       <div v-if="!currentUser" class="navbar-nav ml-auto">
