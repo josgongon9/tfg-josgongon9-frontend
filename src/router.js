@@ -62,20 +62,19 @@ export const router = new Router({
       component: () => import('./views/BoardUser.vue')
     },
     {
-      path: "/",
-      alias: "/tutorials",
+      path: "/tutorials",
       name: "tutorials",
-      component: () => import("./views/TutorialsList")
+      component: () => import('./views/TutorialsList.vue')
     },
     {
       path: "/tutorials/:id",
       name: "tutorial-details",
-      component: () => import("./views/Tutorial")
+      component: () => import('./views/Tutorial.vue')
     },
     {
       path: "/add",
       name: "add",
-      component: () => import("./views/AddTutorial")
+      component: () => import('./views/AddTutorial.vue')
     }
   ]
 });

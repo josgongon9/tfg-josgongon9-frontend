@@ -9,38 +9,27 @@ class TutorialDataService {
   }
 
   get(id) {
-    return axios.get(`tutorials/${id}`);
+    return axios.get(API_URL+`tutorials/${id}`, { headers: authHeader() });
   }
 
   create(data) {
     return axios.post(API_URL+"tutorials", data, { headers: authHeader() });
   }
-  /*create(data) {
-    return axios
-      .post("/tutorials", data)
-      .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
-        }
-
-        return response.data;
-      });
-  }*/
 
   update(id, data) {
-    return axios.put(`tutorials/${id}`, data);
+    return axios.put(API_URL+`tutorials/${id}`, data, { headers: authHeader() });
   }
 
   delete(id) {
-    return axios.delete(`tutorials/${id}`);
+    return axios.delete(API_URL+`tutorials/${id}`, { headers: authHeader() });
   }
 
   deleteAll() {
-    return axios.delete(`tutorials`);
+    return axios.delete(API_URL+"tutorials", { headers: authHeader() });
   }
 
   findByTitle(title) {
-    return axios.get(`tutorials?title=${title}`);
+    return axios.get(API_URL+`tutorials?title=${title}`, { headers: authHeader() });
   }
 }
 
