@@ -23,11 +23,9 @@
           <div class="row">
 
             <div class="col-sm-2 user-details">
-              <img :src="timeEntry.user.image" class="avatar img-circle img-responsive" />
               <p class="text-center">
                 <strong>
-                  {{ timeEntry.user.firstName }} 
-                  {{ timeEntry.user.lastName }}
+                  {{ timeEntry.comment }} 
                 </strong>
               </p>
             </div>
@@ -65,60 +63,48 @@
 
 <script>
   import LogTime from '../views/LogTime.vue'
+  import TimeEntryDataService from "../services/TimeEntryDataService";
   export default {
     components: {
     LogTime
     
   },
 
-  props: {
-    timeEntries: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
+  data() {
+    return {
+      timeEntries: [],
+      currentIndex: -1,
+      date: ""
+    };
   },
 
 
-    /*data () {
-      // We want to start with an existing time entry
-      let existingEntry = {
-        user: {
-          firstName: 'Ryan',
-          lastName: 'Chenkie',
-          email: 'ryanchenkie@gmail.com',
-          image: 'https://1.gravatar.com/avatar/7f4ec37467f2f7db6fffc7b4d2cc8dc2?s=250&d=retro&r=g'
-        },
-        comment: 'First time entry',
-        totalTime: 1.5,
-        date: '2016-04-08'
-      }
-      return {
-        // Start out with the existing entry
-        // by placing it in the array
-        timeEntries: [existingEntry]
-      }
-    },*/
     methods: {
-      // Get the index of the clicked time entry and splice it out
-      deleteTimeEntry (timeEntry) {
-        let index = this.timeEntries.indexOf(timeEntry)
-        if (window.confirm('Are you sure you want to delete this time entry?')) {
-          this.timeEntries.splice(index, 1)
-          //this.$dispatch('deleteTime', timeEntry)
-        }
-      },
-      timeUpdate (timeEntry) {
-        this.timeEntries.push(timeEntry) 
-      }
+      retrieveTimeEntries() {
+      TimeEntryDataService.getAll()
+        .then(response => {
+          this.timeEntries = response.data;
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+      deleteTimeEntry () {
+          TimeEntryDataService.delete(this.currentTimeEntry.id)
+        .then(response => {
+          console.log(response.data);
+          this.$router.push({ name: "timeEntries" });
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
-    /*events: {
-      timeUpdate (timeEntry) {
-        this.timeEntries.push(timeEntry)
-        return true
-      }
-    }*/
+  },
+     mounted() {
+    this.retrieveTimeEntries();
+  }
+    
   }
 </script>
 

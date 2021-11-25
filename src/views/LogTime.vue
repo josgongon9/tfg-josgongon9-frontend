@@ -39,13 +39,12 @@
 </template>
 
 <script>
-
+import TimeEntryDataService from "../services/TimeEntryDataService";
   export default {
     data () {
       return {
-        // We default the user object on
-        // the timeEntry to have some user details
         newtimeEntry: {
+            id: null,
             date: '',
             totalTime: '',
             comment: ''
@@ -54,7 +53,7 @@
       }
     },
     methods: {
-      create  () {
+      /*create  () {
         this.$service.timeEntry.create(this.newtimeEntry).then((data) => {
         //let timeEntry = this.timeEntry
         // We dispatch the timeEntry so it can be pushed
@@ -62,7 +61,24 @@
         this.$emit('create', data)
         this.newtimeEntry = {}
         })
-      }
+      }*/
+    create() {
+      var data = {
+        date: this.newtimeEntry.date,
+        totalTime: this.newtimeEntry.totalTime,
+        comment: this.newtimeEntry.comment
+
+      };
+      TimeEntryDataService.create(data)
+        .then(response => {
+          this.newtimeEntry.id = response.data.id;
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+
     }
   }
 </script>
