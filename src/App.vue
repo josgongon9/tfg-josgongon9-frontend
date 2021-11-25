@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>bezKoder</a>
+      <a href class="navbar-brand" @click.prevent>josgongon</a>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
@@ -16,6 +16,15 @@
         </li>
         <li class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/time-entries" class="nav-link">Timer</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/tutorials" class="nav-link">Tutorials</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/add" class="nav-link">Add</router-link>
         </li>
       </div>
 

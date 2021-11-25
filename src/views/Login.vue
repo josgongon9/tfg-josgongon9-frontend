@@ -102,6 +102,7 @@ export default {
 };
 </script>
 
+<!-- Scoped aisla el estilo en este componente\-->
 <style scoped>
 label {
   display: block;
