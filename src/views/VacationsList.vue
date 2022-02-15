@@ -14,62 +14,62 @@
       </div>
     </div>
     <div class="col-md-6">
-      <h4>Tutorials List</h4>
+      <h4>Vacations List</h4>
       <ul class="list-group">
         <li class="list-group-item"
           :class="{ active: index == currentIndex }"
-          v-for="(tutorial, index) in tutorials"
+          v-for="(vacation, index) in vacations"
           :key="index"
-          @click="setActiveTutorial(tutorial, index)"
+          @click="setActiveVacation(vacation, index)"
         >
-          {{ tutorial.title }}
+          {{ vacation.title }}
         </li>
       </ul>
 
-      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTutorials">
+      <button class="m-3 btn btn-sm btn-danger" @click="removeAllVacations">
         Remove All
       </button>
     </div>
     <div class="col-md-6">
-      <div v-if="currentTutorial">
-        <h4>Tutorial</h4>
+      <div v-if="currentVacation">
+        <h4>Vacation</h4>
         <div>
-          <label><strong>Title:</strong></label> {{ currentTutorial.title }}
+          <label><strong>Title:</strong></label> {{ currentVacation.title }}
         </div>
         <div>
-          <label><strong>Description:</strong></label> {{ currentTutorial.description }}
+          <label><strong>Description:</strong></label> {{ currentVacation.description }}
         </div>
         <div>
-          <label><strong>Status:</strong></label> {{ currentTutorial.published ? "Published" : "Pending" }}
+          <label><strong>Status:</strong></label> {{ currentVacation.published ? "Published" : "Pending" }}
         </div>
 
-        <router-link :to="'/tutorials/' + currentTutorial.id" class="badge badge-warning">Edit</router-link>
+        <router-link :to="'/vacations/' + currentVacation.id" class="badge badge-warning">Edit</router-link>
       </div>
       <div v-else>
         <br />
-        <p>Please click on a Tutorial...</p>
+        <p>Please click on a Vacation...</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import TutorialDataService from "../services/TutorialDataService";
+import VacationDataService from "../services/VacationDataService";
 export default {
-  name: "tutorials-list",
+  name: "vacations-list",
   data() {
     return {
-      tutorials: [],
-      currentTutorial: null,
+      vacations: [],
+      currentVacation: null,
       currentIndex: -1,
       title: ""
     };
   },
   methods: {
-    retrieveTutorials() {
-      TutorialDataService.getAll()
+    retrieveVacations() {
+      VacationDataService.getAll()
         .then(response => {
-          this.tutorials = response.data;
+          this.vacations = response.data;
           console.log(response.data);
         })
         .catch(e => {
@@ -77,16 +77,16 @@ export default {
         });
     },
     refreshList() {
-      this.retrieveTutorials();
-      this.currentTutorial = null;
+      this.retrieveVacations();
+      this.currentVacation = null;
       this.currentIndex = -1;
     },
-    setActiveTutorial(tutorial, index) {
-      this.currentTutorial = tutorial;
+    setActiveVacation(vacation, index) {
+      this.currentVacation = vacation;
       this.currentIndex = index;
     },
-    removeAllTutorials() {
-      TutorialDataService.deleteAll()
+    removeAllVacations() {
+      VacationDataService.deleteAll()
         .then(response => {
           console.log(response.data);
           this.refreshList();
@@ -97,9 +97,9 @@ export default {
     },
     
     searchTitle() {
-      TutorialDataService.findByTitle(this.title)
+      VacationDataService.findByTitle(this.title)
         .then(response => {
-          this.tutorials = response.data;
+          this.vacations = response.data;
           console.log(response.data);
         })
         .catch(e => {
@@ -108,7 +108,7 @@ export default {
     }
   },
   mounted() {
-    this.retrieveTutorials();
+    this.retrieveVacations();
   }
 };
 </script>

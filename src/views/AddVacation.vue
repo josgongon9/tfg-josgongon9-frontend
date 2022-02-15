@@ -8,7 +8,7 @@
           class="form-control"
           id="title"
           required
-          v-model="tutorial.title"
+          v-model="vacation.title"
           name="title"
         />
       </div>
@@ -19,28 +19,28 @@
           class="form-control"
           id="description"
           required
-          v-model="tutorial.description"
+          v-model="vacation.description"
           name="description"
         />
       </div>
 
-      <button @click="saveTutorial" class="btn btn-success">Submit</button>
+      <button @click="saveVacation" class="btn btn-success">Submit</button>
     </div>
 
     <div v-else>
       <h4>You submitted successfully!</h4>
-      <button class="btn btn-success" @click="newTutorial">Add</button>
+      <button class="btn btn-success" @click="newVacation">Add</button>
     </div>
   </div>
 </template>
 
 <script>
-import TutorialDataService from "../services/TutorialDataService";
+import VacationDataService from "../services/VacationDataService";
 export default {
-  name: "add-tutorial",
+  name: "add-vacation",
   data() {
     return {
-      tutorial: {
+      vacation: {
         id: null,
         title: "",
         description: "",
@@ -50,14 +50,14 @@ export default {
     };
   },
   methods: {
-    saveTutorial() {
+    saveVacation() {
       var data = {
-        title: this.tutorial.title,
-        description: this.tutorial.description
+        title: this.vacation.title,
+        description: this.vacation.description
       };
-      TutorialDataService.create(data)
+      VacationDataService.create(data)
         .then(response => {
-          this.tutorial.id = response.data.id;
+          this.vacation.id = response.data.id;
           console.log(response.data);
           this.submitted = true;
         })
@@ -66,9 +66,9 @@ export default {
         });
     },
     
-    newTutorial() {
+    newVacation() {
       this.submitted = false;
-      this.tutorial = {};
+      this.vacation = {};
     }
   }
 };

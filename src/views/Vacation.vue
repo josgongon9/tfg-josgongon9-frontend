@@ -1,28 +1,28 @@
 <template>
-  <div v-if="currentTutorial" class="edit-form">
-    <h4>Tutorial</h4>
+  <div v-if="currentVacation" class="edit-form">
+    <h4>Vacation</h4>
     <form>
       <div class="form-group">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title"
-          v-model="currentTutorial.title"
+          v-model="currentVacation.title"
         />
       </div>
       <div class="form-group">
         <label for="description">Description</label>
         <input type="text" class="form-control" id="description"
-          v-model="currentTutorial.description"
+          v-model="currentVacation.description"
         />
       </div>
 
       <div class="form-group">
         <label><strong>Status:</strong></label>
-        {{ currentTutorial.published ? "Published" : "Pending" }}
+        {{ currentVacation.published ? "Published" : "Pending" }}
       </div>
     </form>
 
     <button class="badge badge-primary mr-2"
-      v-if="currentTutorial.published"
+      v-if="currentVacation.published"
       @click="updatePublished(false)"
     >
       UnPublish
@@ -34,13 +34,13 @@
     </button>
 
     <button class="badge badge-danger mr-2"
-      @click="deleteTutorial"
+      @click="deleteVacation"
     >
       Delete
     </button>
 
     <button type="submit" class="badge badge-success"
-      @click="updateTutorial"
+      @click="updateVacation"
     >
       Update
     </button>
@@ -49,25 +49,25 @@
 
   <div v-else>
     <br />
-    <p>Please click on a Tutorial...</p>
+    <p>Please click on a Vacation...</p>
   </div>
 </template>
 
 <script>
-import TutorialDataService from "../services/TutorialDataService";
+import VacationDataService from "../services/VacationDataService";
 export default {
-  name: "tutorial",
+  name: "vacation",
   data() {
     return {
-      currentTutorial: null,
+      currentVacation: null,
       message: ''
     };
   },
   methods: {
-    getTutorial(id) {
-      TutorialDataService.get(id)
+    getVacation(id) {
+      VacationDataService.get(id)
         .then(response => {
-          this.currentTutorial = response.data;
+          this.currentVacation = response.data;
           console.log(response.data);
         })
         .catch(e => {
@@ -76,35 +76,35 @@ export default {
     },
     updatePublished(status) {
       var data = {
-        id: this.currentTutorial.id,
-        title: this.currentTutorial.title,
-        description: this.currentTutorial.description,
+        id: this.currentVacation.id,
+        title: this.currentVacation.title,
+        description: this.currentVacation.description,
         published: status
       };
-      TutorialDataService.update(this.currentTutorial.id, data)
+      VacationDataService.update(this.currentVacation.id, data)
         .then(response => {
-          this.currentTutorial.published = status;
+          this.currentVacation.published = status;
           console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
     },
-    updateTutorial() {
-      TutorialDataService.update(this.currentTutorial.id, this.currentTutorial)
+    updateVacation() {
+      VacationDataService.update(this.currentVacation.id, this.currentVacation)
         .then(response => {
           console.log(response.data);
-          this.message = 'The tutorial was updated successfully!';
+          this.message = 'The vacation was updated successfully!';
         })
         .catch(e => {
           console.log(e);
         });
     },
-    deleteTutorial() {
-      TutorialDataService.delete(this.currentTutorial.id)
+    deleteVacation() {
+      VacationDataService.delete(this.currentVacation.id)
         .then(response => {
           console.log(response.data);
-          this.$router.push({ name: "tutorials" });
+          this.$router.push({ name: "vacations" });
         })
         .catch(e => {
           console.log(e);
@@ -113,7 +113,7 @@ export default {
   },
   mounted() {
     this.message = '';
-    this.getTutorial(this.$route.params.id);
+    this.getVacation(this.$route.params.id);
   }
 };
 </script>

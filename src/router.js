@@ -62,19 +62,19 @@ export const router = new Router({
       component: () => import('./views/BoardUser.vue')
     },
     {
-      path: "/tutorials",
-      name: "tutorials",
-      component: () => import('./views/TutorialsList.vue')
+      path: "/vacations",
+      name: "vacations",
+      component: () => import('./views/VacationsList.vue')
     },
     {
-      path: "/tutorials/:id",
-      name: "tutorial-details",
-      component: () => import('./views/Tutorial.vue')
+      path: "/vacations/:id",
+      name: "vacation-details",
+      component: () => import('./views/Vacation.vue')
     },
     {
       path: "/add",
       name: "add",
-      component: () => import('./views/AddTutorial.vue')
+      component: () => import('./views/AddVacation.vue')
     }
   ]
 });
