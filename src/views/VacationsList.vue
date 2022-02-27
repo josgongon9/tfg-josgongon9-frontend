@@ -8,13 +8,13 @@
           <button class="btn btn-outline-secondary" type="button"
             @click="searchTitle"
           >
-            Search
+            Buscar
           </button>
         </div>
       </div>
     </div>
     <div class="col-md-6">
-      <h4>Vacations List</h4>
+      <h4>Mis vacaciones</h4>
       <ul class="list-group">
         <li class="list-group-item"
           :class="{ active: index == currentIndex }"
@@ -32,15 +32,15 @@
     </div>
     <div class="col-md-6">
       <div v-if="currentVacation">
-        <h4>Vacation</h4>
+        <h4>Vacaciones</h4>
         <div>
-          <label><strong>Title:</strong></label> {{ currentVacation.title }}
+          <label><strong>Título:</strong></label> {{ currentVacation.title }}
         </div>
         <div>
-          <label><strong>Description:</strong></label> {{ currentVacation.description }}
+          <label><strong>Descripción:</strong></label> {{ currentVacation.description }}
         </div>
         <div>
-          <label><strong>Status:</strong></label> {{ currentVacation.published ? "Published" : "Pending" }}
+          <label><strong>Estado:</strong></label> {{ currentVacation.published ? "Published" : "Pending" }}
         </div>
 
         <router-link :to="'/vacations/' + currentVacation.id" class="badge badge-warning">Edit</router-link>

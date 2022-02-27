@@ -59,11 +59,20 @@
     <div class="container">
       <router-view />
     </div>
+    <div class="footer">
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script>
+import Footer from './views/Footer.vue'
+
 export default {
+  name: 'about',
+  components: {
+    Footer
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -91,3 +100,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.footer {
+  width: 100%;
+  min-height: 24vh;
+}
+
+</style>
