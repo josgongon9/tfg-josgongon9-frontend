@@ -1,22 +1,22 @@
 <template>
   <div v-if="currentVacation" class="edit-form">
-    <h4>Vacation</h4>
+    <h4>Vacaciones</h4>
     <form>
       <div class="form-group">
-        <label for="title">Title</label>
+        <label for="title">Titulo</label>
         <input type="text" class="form-control" id="title"
           v-model="currentVacation.title"
         />
       </div>
       <div class="form-group">
-        <label for="description">Description</label>
+        <label for="description">Descripcion</label>
         <input type="text" class="form-control" id="description"
           v-model="currentVacation.description"
         />
       </div>
 
       <div class="form-group">
-        <label><strong>Status:</strong></label>
+        <label><strong>Estado:</strong></label>
         {{ currentVacation.published ? "Published" : "Pending" }}
       </div>
     </form>
@@ -25,31 +25,31 @@
       v-if="currentVacation.published"
       @click="updatePublished(false)"
     >
-      UnPublish
+      Quitar
     </button>
     <button v-else class="badge badge-primary mr-2"
       @click="updatePublished(true)"
     >
-      Publish
+      Publicar
     </button>
 
     <button class="badge badge-danger mr-2"
       @click="deleteVacation"
     >
-      Delete
+      Borrar
     </button>
 
     <button type="submit" class="badge badge-success"
       @click="updateVacation"
     >
-      Update
+      Actualizar
     </button>
     <p>{{ message }}</p>
   </div>
 
   <div v-else>
     <br />
-    <p>Please click on a Vacation...</p>
+    <p>Por favor, seleccione un día...</p>
   </div>
 </template>
 

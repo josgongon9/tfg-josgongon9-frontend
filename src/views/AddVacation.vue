@@ -35,8 +35,7 @@
         />
       </div>
       <div id="date-result">
-        <p>Días solicitados:</p>
-        <p>{{resultDate}}</p>
+        <p>Días solicitados: {{resultDate}}</p>
       </div>
       <div class="form-group">
         <label for="description">Description</label>
@@ -82,10 +81,6 @@ export default {
 
   methods: {
     calculateDate() {
-      //var fecha1 = moment(this.vacation.startDate);
-     // var fecha2 = moment(this.vacation.endDate);
-      //this.resultDate = fecha2.diff(fecha1, 'days');
-      //this.resultDate = this.vacation.startDate;
       let start = moment(this.vacation.startDate);
       let end = moment(this.vacation.endDate);
       let duration = moment.duration(end.diff(start));

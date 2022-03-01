@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <span>💻 with ❤️ &amp; <a href="//vuejs.org">Vue.js</a> in Seville</span>
+    <span> <a href="//localhost:8080/swagger-ui.html">Swagger</a>💻  in Seville</span>
   </footer>
 </template>
 
