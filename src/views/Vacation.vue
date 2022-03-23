@@ -21,25 +21,25 @@
       </div>
     </form>
 
-    <button class="badge badge-primary mr-2"
+    <button class="btn btn-warning"
       v-if="currentVacation.published"
       @click="updatePublished(false)"
     >
       Quitar
     </button>
-    <button v-else class="badge badge-primary mr-2"
+    <button v-else class="btn btn-warning"
       @click="updatePublished(true)"
     >
       Publicar
     </button>
 
-    <button class="badge badge-danger mr-2"
+    <button class="btn btn-danger"
       @click="deleteVacation"
     >
       Borrar
     </button>
 
-    <button type="submit" class="badge badge-success"
+    <button type="submit" class="btn btn-primary"
       @click="updateVacation"
     >
       Actualizar

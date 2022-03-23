@@ -1,11 +1,24 @@
 <template>
+
   <div class="list row">
+     <div class="col-md-1">
+       <router-link v-if="currentUser" to="/add" class="nav-link">Añadir</router-link>
+    </div>
+
+    
+
     <div class="col-md-8">
       <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search by title"
-          v-model="title"/>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Introduce título..."
+          v-model="title"
+        />
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button"
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
             @click="searchTitle"
           >
             Buscar
@@ -13,10 +26,15 @@
         </div>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <h4>Días restantes:</h4>  {{currentUser.daysOfVacation}}
+    </div>
     <div class="col-md-6">
       <h4>Mis vacaciones</h4>
       <ul class="list-group">
-        <li class="list-group-item"
+        <li
+          class="list-group-item"
           :class="{ active: index == currentIndex }"
           v-for="(vacation, index) in vacations"
           :key="index"
@@ -26,53 +44,88 @@
         </li>
       </ul>
 
-      <button class="m-3 btn btn-sm btn-danger" @click="removeAllVacations">
-        Remove All
-      </button>
+      <!--<button class="m-3 btn btn-sm btn-danger" @click="removeAllVacations">
+        Borrar todo
+      </button>-->
     </div>
     <div class="col-md-6">
       <div v-if="currentVacation">
-        <h4>Vacaciones</h4>
+        <h4>{{ currentVacation.title }}</h4>
         <div>
-          <label><strong>Título:</strong></label> {{ currentVacation.title }}
+          <label><strong>Descripción:</strong></label>
+          {{ currentVacation.description }}
         </div>
         <div>
-          <label><strong>Descripción:</strong></label> {{ currentVacation.description }}
+          <label><strong>Estado:</strong></label>
+          {{ currentVacation.published ? 'Published' : 'Pending' }}
         </div>
         <div>
-          <label><strong>Estado:</strong></label> {{ currentVacation.published ? "Published" : "Pending" }}
+          <label><strong>Fecha Inicio:</strong></label>
+          {{ currentVacation.startDate | dataFormat }}
         </div>
-
-        <router-link :to="'/vacations/' + currentVacation.id" class="badge badge-warning">Edit</router-link>
+        <div>
+          <label><strong>Fecha Fin:</strong></label>
+          {{ currentVacation.endDate | dataFormat }}
+        </div>
+        <div>
+          <label><strong>Días solicitados:</strong></label>
+          {{
+            calculateDate(currentVacation.startDate, currentVacation.endDate)
+          }}
+        </div>
+        <router-link
+          :to="'/vacations/' + currentVacation.id"
+          class="btn btn-warning"
+          >Editar</router-link
+        >
       </div>
       <div v-else>
         <br />
-        <p>Please click on a Vacation...</p>
+        <p>Por favor seleccione una...</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import VacationDataService from "../services/VacationDataService";
+import VacationDataService from '../services/VacationDataService';
+import moment from 'moment';
 export default {
-  name: "vacations-list",
+  filters: {
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY');
+      }
+    },
+  },
+  name: 'vacations-list',
   data() {
     return {
       vacations: [],
       currentVacation: null,
       currentIndex: -1,
-      title: ""
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   methods: {
+    calculateDate(date1, date2) {
+      let start = moment(date1);
+      let end = moment(date2);
+      let duration = moment.duration(end.diff(start));
+      let days = duration.asDays();
+      return Math.round(days) + 1;
+    },
     retrieveVacations() {
       VacationDataService.getAll()
-        .then(response => {
+        .then((response) => {
           this.vacations = response.data;
           console.log(response.data);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
@@ -87,29 +140,33 @@ export default {
     },
     removeAllVacations() {
       VacationDataService.deleteAll()
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
           this.refreshList();
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
-    
+
     searchTitle() {
       VacationDataService.findByTitle(this.title)
-        .then(response => {
+        .then((response) => {
           this.vacations = response.data;
           console.log(response.data);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
-    }
+    },
   },
   mounted() {
     this.retrieveVacations();
-  }
+    this.resultDate = calculateDate;
+    if (!this.currentUser) {
+      this.$router.push('/login');
+    }
+  },
 };
 </script>
 

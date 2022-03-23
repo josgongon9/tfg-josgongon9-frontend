@@ -38,31 +38,27 @@
         <b-thead>
           <b-tr>
             <b-th>Usuario</b-th>
-            <b-th>Rol</b-th>
-            <b-th>campo3</b-th>
+            <b-th>Email</b-th>
+            <b-th>Roles</b-th>
             <b-th>campo4</b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
-          <b-tr v-for="(item, index) in items.results" :key="index">
+          <b-tr v-for="(item, index) in items" :key="index">
             <b-td style="vertical-align: middle">
               <span>{{ item.username }}</span>
-              <br />
-              <span class="cursiva">{{ item.email }}</span>
             </b-td>
-            <b-td style="vertical-align: middle" v-if="item.size == 1000"
-              >1kg</b-td
-            >
-            <b-td style="vertical-align: middle" v-else>{{ item.size }}g</b-td>
-            <b-td style="vertical-align: middle">{{ item.price }}€</b-td>
-           
+            <b-td style="vertical-align: middle">{{ item.email }}</b-td>
+            <b-td style="vertical-align: middle">
+              <b-tr v-for="(rol, a) in item.roles" :key="a">
+                <span>{{ rol.name }}</span>
+              </b-tr>
+            </b-td>
             <b-td style="vertical-align: middle">
               <router-link
-                :to="{ name: 'estancoPorProducto', params: { id: item.id } }"
+                :to="{ name: 'eliminarUsuario', params: { id: item.id } }"
               >
-                <b-button class="availability-button"
-                  >Ver disponibilidad</b-button
-                >
+                <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
           </b-tr>
@@ -114,10 +110,6 @@ export default {
     text-align: center;
     padding-top: 2%;
     margin-left: 25%;
-  }
-
-  .products {
-    text-align: center;
   }
 
   .div-buttons {
@@ -177,43 +169,5 @@ export default {
   box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
 }
 
-.news-b {
-  border: none !important;
-  color: white !important;
-  background: var(--mango) !important;
-  border-radius: 4px 4px 4px 4px !important;
-}
 
-.news-b:hover {
-  color: white !important;
-  background: #ff7818 !important;
-}
-
-.availability-button {
-  border: none;
-  color: var(--mango) !important;
-  background: white !important;
-  margin: 0;
-  border: 1px solid var(--mango) !important;
-  border-radius: 4px 4px 4px 4px !important;
-}
-
-.availability-button:hover {
-  color: white !important;
-  background: var(--mango) !important;
-  box-shadow: 0px 0px 1px 2px rgba(228, 160, 65, 0.432) !important;
-}
-
-.modal-ok-button {
-  border: none;
-  background: var(--mango) !important;
-  color: white !important;
-  border: 1px solid var(--mango) !important;
-  border-radius: 4px 4px 4px 4px !important;
-}
-
-.modal-ok-button:hover {
-  color: white !important;
-  background: #ff8026 !important;
-}
 </style>

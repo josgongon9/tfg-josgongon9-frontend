@@ -51,7 +51,7 @@
     </div>
 
     <div v-else>
-      <h4>You submitted successfully!</h4>
+      <h4>¡Solicitada Correctamente!</h4>
       <button class="btn btn-success" @click="newVacation">
         Añadir vacaciones
       </button>
@@ -85,7 +85,7 @@ export default {
       let end = moment(this.vacation.endDate);
       let duration = moment.duration(end.diff(start));
       let days = duration.asDays();
-      this.resultDate = Math.round(days);
+      this.resultDate = Math.round(days) + 1;
     },
     saveVacation() {
       var data = {
