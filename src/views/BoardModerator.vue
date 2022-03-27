@@ -14,33 +14,22 @@
             placeholder="Buscar usuario."
           ></b-form-input>
           <b-input-group-append>
-            <b-button
-              v-on:click="changePageAndSearch()"
-              size="md"
-              class="search-b"
-            >
+            <b-button @click="searchTitle" size="md" class="search-b">
               <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
-          <b-button
-            v-b-modal.modal-xl
-            v-on:click="get_new()"
-            size="md"
-            class="news-b ml-2"
-            >Novedades</b-button
-          >
         </b-input-group>
       </b-col>
     </b-row>
 
     <b-row align-h="center" class="mb-5">
-      <b-table-simple class="products" striped responsive>
+      <b-table-simple  striped responsive>
         <b-thead>
           <b-tr>
             <b-th>Usuario</b-th>
             <b-th>Email</b-th>
             <b-th>Roles</b-th>
-            <b-th>campo4</b-th>
+            <b-th>Acción</b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
@@ -51,13 +40,14 @@
             <b-td style="vertical-align: middle">{{ item.email }}</b-td>
             <b-td style="vertical-align: middle">
               <b-tr v-for="(rol, a) in item.roles" :key="a">
-                <span>{{ rol.name }}</span>
+                <span>{{ rol.name | getRol }}</span>
               </b-tr>
             </b-td>
             <b-td style="vertical-align: middle">
               <router-link
                 :to="{ name: 'eliminarUsuario', params: { id: item.id } }"
               >
+                <b-button class="btn btn-info">Editar</b-button>
                 <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
@@ -79,6 +69,17 @@ export default {
       searchText: '',
     };
   },
+  filters: {
+    getRol: function (value) {
+      if (value == 'ROLE_MODERATOR') {
+        return 'Moderador';
+      } else if (value == 'ROLE_USER') {
+        return 'Usuario';
+      } else if (value == 'ROLE_ADMIN') {
+        return 'Administrador';
+      }
+    },
+  },
   methods: {
     retrieveUsers() {
       UserService.getAllUsers()
@@ -92,6 +93,16 @@ export default {
     },
     refreshList() {
       this.retrieveUsers();
+    },
+    searchTitle() {
+      UserService.findByUser(this.username)
+        .then((response) => {
+          this.items = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
   },
   mounted() {
@@ -168,6 +179,4 @@ export default {
   border-right: 0 !important;
   box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
 }
-
-
 </style>

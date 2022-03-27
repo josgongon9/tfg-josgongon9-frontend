@@ -1,11 +1,10 @@
 <template>
-
   <div class="list row">
-     <div class="col-md-1">
-       <router-link v-if="currentUser" to="/add" class="nav-link">Añadir</router-link>
+    <div class="col-md-1">
+      <router-link v-if="currentUser" to="/add" class="btn btn-success"
+        >Añadir</router-link
+      >
     </div>
-
-    
 
     <div class="col-md-8">
       <div class="input-group mb-3">
@@ -27,8 +26,9 @@
       </div>
     </div>
 
-    <div class="col-md-4">
-      <h4>Días restantes:</h4>  {{currentUser.daysOfVacation}}
+    <div class="col-md-2">
+      <h4>Días restantes:</h4>
+      {{ currentUser.daysOfVacation }}
     </div>
     <div class="col-md-6">
       <h4>Mis vacaciones</h4>
@@ -43,10 +43,6 @@
           {{ vacation.title }}
         </li>
       </ul>
-
-      <!--<button class="m-3 btn btn-sm btn-danger" @click="removeAllVacations">
-        Borrar todo
-      </button>-->
     </div>
     <div class="col-md-6">
       <div v-if="currentVacation">
@@ -176,4 +172,11 @@ export default {
   max-width: 750px;
   margin: auto;
 }
+.btn-success{
+position: absolute;
+left: 0px;
+
+}
+
+      
 </style>
