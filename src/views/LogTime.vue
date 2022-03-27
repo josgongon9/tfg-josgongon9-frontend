@@ -2,7 +2,7 @@
   <div class="form-horizontal">
     <div class="form-group">
       <div class="col-sm-6">
-        <label>Date</label>
+        <label>Fecha</label>
         <input 
           type="date"
           class="form-control"
@@ -11,7 +11,7 @@
         />
       </div>
       <div class="col-sm-6">
-        <label>Hours</label>
+        <label>Horas</label>
         <input 
           type="number" 
           class="form-control"
@@ -22,7 +22,7 @@
     </div>    
     <div class="form-group">
       <div class="col-sm-12">
-        <label>Comment</label>
+        <label>Comentario</label>
         <input 
           type="text" 
           class="form-control"
@@ -31,8 +31,8 @@
         />
       </div>        
     </div>    
-    <button class="btn btn-primary" @click="create()">Create</button>
-    <router-link to="/time-entries" class="btn btn-danger" tag ="button">Cancel</router-link>  
+    <button class="btn btn-primary" @click="create()">Crear</button>
+    <router-link to="/time-entries" class="btn btn-danger" tag ="button">Cancelar</router-link>  
     <hr>
   </div>
   

@@ -9,22 +9,22 @@
           </router-link>
         </li>
         <li v-if="showAdminBoard" class="nav-item">
-          <router-link to="/admin" class="nav-link">Admin Board</router-link>
+          <router-link to="/admin" class="nav-link">Panel administrador</router-link>
         </li>
         <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/mod" class="nav-link">Moderator Board</router-link>
+          <router-link to="/mod" class="nav-link">Panel Moderador</router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+          <router-link v-if="currentUser" to="/user" class="nav-link">Usuario</router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/time-entries" class="nav-link">Timer</router-link>
+          <router-link v-if="currentUser" to="/time-entries" class="nav-link">Control Horario</router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/tutorials" class="nav-link">Tutorials</router-link>
+          <router-link v-if="currentUser" to="/vacations" class="nav-link">Vacaciones</router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/add" class="nav-link">Add</router-link>
+          <router-link v-if="currentUser" to="/add" class="nav-link">Añadir</router-link>
         </li>
       </div>
 
@@ -59,11 +59,20 @@
     <div class="container">
       <router-view />
     </div>
+    <div class="footer">
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script>
+import Footer from './views/Footer.vue'
+
 export default {
+  name: 'about',
+  components: {
+    Footer
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -91,3 +100,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.footer {
+  width: 100%;
+  min-height: 24vh;
+}
+
+</style>

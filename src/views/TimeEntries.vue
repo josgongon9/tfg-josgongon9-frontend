@@ -3,11 +3,11 @@
     <router-link to="/time-entries/log-time"
       v-if="$route.path !== '/time-entries/log-time'"
       class="btn btn-primary" tag= "button">
-      Log Time
+      Control horario
     </router-link>
 
     <div v-if="$route.path === '/time-entries/log-time'">
-      <h3>Log Time</h3>     
+      <h3>Control horario</h3>     
     </div>
 
     <hr>
@@ -15,7 +15,7 @@
     <router-view></router-view>
 
     <div class="time-entries">
-      <p v-if="!timeEntries.length"><strong>No time entries yet</strong></p>
+      <p v-if="!timeEntries.length"><strong>No hay entradas</strong></p>
       
       <div class="list-group">
 
@@ -33,7 +33,7 @@
             <div class="col-sm-2 text-center time-block">
               <h3 class="list-group-item-text total-time">
                 <i class="glyphicon glyphicon-time"></i> 
-                {{ timeEntry.totalTime }} <small>hours</small>
+                {{ timeEntry.totalTime }} <small>horas</small>
               </h3>
               <p class="label label-primary text-center">
                 <i class="glyphicon glyphicon-calendar"></i> 

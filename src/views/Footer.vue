@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <span>💻 with ❤️ &amp; <a href="//vuejs.org">Vue.js</a> in Seville</span>
+    <span> <a href="//localhost:8080/swagger-ui.html">Swagger</a>💻  in Seville</span>
   </footer>
 </template>
 
@@ -10,18 +10,15 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style >
   footer {
     box-sizing: border-box;
-    background-color: #cfd8dc;
+    background-color: #5f5a5a;
     bottom: 0;
     left: 0;
     padding: 1rem;
     position: absolute;
     width: 100%;
-    a {
-      text-decoration: none;
-      color: #546E7A;
-    }
+    
   }
 </style>
