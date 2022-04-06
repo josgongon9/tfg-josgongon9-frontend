@@ -47,7 +47,9 @@
           name="description"
         />
       </div>
+       <div id="button-enviar">
       <button @click="saveVacation" class="btn btn-success">Enviar</button>
+      </div>
     </div>
 
     <div v-else>
@@ -114,6 +116,13 @@ export default {
 </script>
 
 <style>
+
+
+.button-enviar {
+    text-align: center;
+   width: 30%;
+   margin-right: 5px;
+  }
 .submit-form {
   max-width: 300px;
   margin: auto;

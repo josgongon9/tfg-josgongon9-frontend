@@ -15,7 +15,7 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button @click="searchTitle" size="md" class="search-b">
-              <font-awesome-icon icon="search" />
+             <font-awesome-icon icon="fa-solid fa-magnifying-glass"/>
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -23,7 +23,7 @@
     </b-row>
 
     <b-row align-h="center" class="mb-5">
-      <b-table-simple  striped responsive>
+      <b-table-simple striped responsive>
         <b-thead>
           <b-tr>
             <b-th>Usuario</b-th>
@@ -47,7 +47,7 @@
               <router-link
                 :to="{ name: 'eliminarUsuario', params: { id: item.id } }"
               >
-                <b-button class="btn btn-info">Editar</b-button>
+                <b-button class="btn btn-info">Ver </b-button>
                 <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
@@ -112,6 +112,12 @@ export default {
 </script>
 
 <style scoped>
+
+.btn-info {
+    text-align: center;
+   width: 30%;
+   margin-right: 5px;
+  }
 .container {
   text-align: center;
 }

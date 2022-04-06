@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <span> <a href="//localhost:8080/swagger-ui.html">Swagger</a>💻  in Seville</span>
+    <span> <a href="//localhost:8080/swagger-ui.html">Swagger</a> 💻  in Seville  </span>
   </footer>
 </template>
 
@@ -19,6 +19,7 @@ export default {
     padding: 1rem;
     position: absolute;
     width: 100%;
+    text-align: center;
     
   }
 </style>

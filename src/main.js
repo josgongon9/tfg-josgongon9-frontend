@@ -17,8 +17,12 @@ import {
   faSignInAlt,
   faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { faHatWizard } from '@fortawesome/free-solid-svg-icons';
+
 
 library.add(faHome, faUser, faUserPlus, faSignInAlt, faSignOutAlt);
+library.add(faHatWizard)
+
 
 Vue.config.productionTip = false;
 

@@ -23,9 +23,6 @@
         <li class="nav-item">
           <router-link v-if="currentUser" to="/vacations" class="nav-link">Vacaciones</router-link>
         </li>
-        <li class="nav-item">
-          <router-link v-if="currentUser" to="/add" class="nav-link">Añadir</router-link>
-        </li>
       </div>
 
       <div v-if="!currentUser" class="navbar-nav ml-auto">
