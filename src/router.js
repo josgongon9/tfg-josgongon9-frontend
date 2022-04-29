@@ -4,7 +4,9 @@ import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 import TimeEntries from './views/TimeEntries.vue'
-import LogTime from './views/LogTime.vue'
+import LogTime from './views/LogTime.vue';
+import Organizations from './views/OrganizationsList.vue';
+
 
 Vue.use(Router);
 
@@ -36,6 +38,16 @@ export const router = new Router({
     {
       path: '/register',
       component: Register
+    },
+    {
+      path: '/organizations',
+      name: "organizations",
+      component: Organizations
+    },
+    {
+      path: "/organizations/add",
+      name: "add-organization",
+      component: () => import('./views/AddOrganization.vue')
     },
     {
       path: '/profile',

@@ -1,6 +1,8 @@
 <template>
   <footer>
     <span> <a href="//localhost:8080/swagger-ui.html">Swagger</a> 💻  in Seville  </span>
+<font-awesome-icon icon="fa-brands fa-github" />   
+<font-awesome-icon icon="fa-brands fa-linkedin" />
   </footer>
 </template>
 
@@ -16,8 +18,8 @@ export default {
     background-color: #5f5a5a;
     bottom: 0;
     left: 0;
+    position: fixed;
     padding: 1rem;
-    position: absolute;
     width: 100%;
     text-align: center;
     
