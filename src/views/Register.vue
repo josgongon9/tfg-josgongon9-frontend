@@ -99,7 +99,13 @@ export default {
               this.message = data.message;
               this.successful = true;
             },
-           
+            error => {
+              this.message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+              this.successful = false;
+            }
           );
         }
       });

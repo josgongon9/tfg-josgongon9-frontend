@@ -9,7 +9,7 @@ class OrganizationDataService {
   }
 
   get(id) {
-    return axios.get(API_URL+`organizations/${id}`, { headers: authHeader() });
+    return axios.get(API_URL+`${id}`, { headers: authHeader() });
   }
 
   create(data) {
@@ -17,19 +17,19 @@ class OrganizationDataService {
   }
 
   update(id, data) {
-    return axios.put(API_URL+`organizations/${id}`, data, { headers: authHeader() });
+    return axios.put(API_URL+`${id}`, data, { headers: authHeader() });
   }
 
   delete(id) {
-    return axios.delete(API_URL+`organizations/${id}`, { headers: authHeader() });
-  }
-
-  deleteAll() {
-    return axios.delete(API_URL+"organizations", { headers: authHeader() });
+    return axios.delete(API_URL+`${id}`, { headers: authHeader() });
   }
 
   findByName(name) {
     return axios.get(API_URL+`organizations?name=${name}`, { headers: authHeader() });
+  }
+
+  updateUsers(id, idUser) {
+    return axios.put(API_URL+"updateUsers?"+`id=${id}`+`&idUser=${idUser}`, idUser, { headers: authHeader() });
   }
 }
 

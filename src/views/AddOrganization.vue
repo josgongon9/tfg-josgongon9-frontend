@@ -113,13 +113,11 @@
           :select-size="4"
           v-validate="'required'"
           name="moderador"
-          
         >
-         <option
-            v-for="(item, index) in moderadorList" :key="index">
-          
+          <option v-for="(item, index) in moderadorList" :key="index">
             {{ item.username }}
-          </option></b-form-select>
+          </option></b-form-select
+        >
         <div v-if="errors.has('moderador')" class="alert alert-danger">
           {{ 'Es necesario elegir mínimo un Moderador' }}
         </div>
@@ -139,6 +137,15 @@
         Crear otra organización
       </button>
     </b-form>
+    <div class="mt-4" v-if="errores && errores.length">
+      <b-alert
+        :show="true"
+        variant="danger"
+        v-for="error of errores"
+        v-bind:key="error"
+        >{{ error }}</b-alert
+      >
+    </div>
   </div>
 </template>
 <script>
@@ -150,6 +157,7 @@ export default {
   name: 'add-organization',
   data() {
     return {
+      errores: [],
       organization: {
         id: null,
         name: null,
@@ -170,6 +178,7 @@ export default {
 
   methods: {
     handleSubmit() {
+      this.errores.pop();
       this.message = '';
       this.$validator.validate().then((valid) => {
         if (valid) {
@@ -178,7 +187,7 @@ export default {
       });
     },
     retrieveMods() {
-      UserService.getAllMod()
+      UserService.getAllByRol("ROLE_MODERATOR")
         .then((response) => {
           this.moderadorList = response.data;
           console.log(response.data);
@@ -211,7 +220,7 @@ export default {
           this.submitted = true;
         })
         .catch((e) => {
-          console.log(e);
+          this.errores.push(e.response.data);
         });
     },
 
@@ -222,13 +231,6 @@ export default {
   },
   onReset(event) {
     event.preventDefault();
-    this.form.email = '';
-    this.form.name = 'cxcz';
-    this.form.food = null;
-    this.show = false;
-    this.$nextTick(() => {
-      this.show = true;
-    });
   },
   mounted() {
     this.retrieveMods();

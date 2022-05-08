@@ -15,7 +15,7 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button @click="searchTitle" size="md" class="search-b">
-             <font-awesome-icon icon="fa-solid fa-magnifying-glass"/>
+             <font-awesome-icon icon="search"/>
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -95,7 +95,7 @@ export default {
       this.retrieveUsers();
     },
     searchTitle() {
-      UserService.findByUser(this.username)
+      UserService.findByUser(this.searchText)
         .then((response) => {
           this.items = response.data;
           console.log(response.data);

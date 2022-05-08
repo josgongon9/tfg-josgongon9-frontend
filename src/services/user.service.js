@@ -24,9 +24,18 @@ class UserService {
     return axios.get(API_URL + 'listUsers', { headers: authHeader() });
   }
 
-  getAllMod() {
-    return axios.get(API_URL + 'listMod', { headers: authHeader() });
+  getAllByRol(role) {
+    return axios.get(API_URL + `AllByRol/${role}`, { headers: authHeader() });
   }
+
+  findByUser(username){
+    return axios.get(API_URL + "findByUsername?"+`username=${username}`, { headers: authHeader() });
+  }
+
+  moderadoresByOrganization(idOrg){
+    return axios.get(API_URL + "moderadoresByOrganization?"+`idOrg=${idOrg}`, { headers: authHeader() });
+  }
+
 }
 
 export default new UserService();

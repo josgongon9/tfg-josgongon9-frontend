@@ -6,7 +6,7 @@
 
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
-        <router-link :to="{ path: '/organizations/add' }"
+        <router-link :to="{ name: 'add-organization' }"
           ><b-button size="md" class="btn btn-success"
             >Añadir</b-button
           ></router-link
@@ -45,16 +45,17 @@
             </b-td>
             <b-td style="vertical-align: middle">{{ item.description }}</b-td>
             <b-td style="vertical-align: middle">
-              <b-tr v-for="(mod, a) in item.moderador" :key="a">
+              <b-tr v-for="(mod, a) in retrieveModsByOrg(item.id)" :key="a">
                 <span>{{ mod.name }}</span>
               </b-tr>
             </b-td>
             <b-td style="vertical-align: middle">
               <router-link
-                :to="{ name: 'eliminarUsuario', params: { id: item.id } }"
+                :to="'/organizations/' + item.id"
               >
                 <b-button class="btn btn-info">Ver </b-button>
               </router-link>
+
             </b-td>
           </b-tr>
         </b-tbody>
@@ -65,13 +66,14 @@
 
 <script>
 import OrganizationDataService from '../services/OrganizationDataService';
-
+import UserService from '../services/user.service';
 export default {
   name: 'organizations',
   data() {
     return {
       organizations: [],
       searchText: '',
+      modByOrg: [],
     };
   },
   methods: {
@@ -85,6 +87,16 @@ export default {
           console.log(e);
         });
     },
+    retrieveModsByOrg(id){
+    UserService.moderadoresByOrganization(id)
+        .then((response) => {
+          this.modByOrg = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+  },
     refreshList() {
       this.retrieveOrganizations();
     },

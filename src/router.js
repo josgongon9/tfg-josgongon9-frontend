@@ -45,6 +45,11 @@ export const router = new Router({
       component: Organizations
     },
     {
+      path: "/organizations/:id",
+      name: "organizations-details",
+      component: () => import('./views/Organization.vue')
+    },
+    {
       path: "/organizations/add",
       name: "add-organization",
       component: () => import('./views/AddOrganization.vue')
