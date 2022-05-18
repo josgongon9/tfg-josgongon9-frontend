@@ -110,9 +110,15 @@
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
 
           <b-button @click="showDismissibleAlert = true" variant="danger">
-            Borrar 
+            Borrar
           </b-button>
-          <b-modal v-model="showDismissibleAlert" variant="danger" dismissible size="xs"  title="¿Estas seguro de que deseas borrar esta organización?">
+          <b-modal
+            v-model="showDismissibleAlert"
+            variant="danger"
+            dismissible
+            size="xs"
+            title="¿Estas seguro de que deseas borrar esta organización?"
+          >
             <b-button type="delete" variant="danger" @click="deleteOrganization"
               >Si, estoy seguro</b-button
             >

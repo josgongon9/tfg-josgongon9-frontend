@@ -43,19 +43,19 @@
             <b-td style="vertical-align: middle">
               <span>{{ item.name }}</span>
             </b-td>
-            <b-td style="vertical-align: middle">{{ item.description }}</b-td>
+            <b-td style="vertical-align: middle">{{ item.province +", " + item.city +", " + item.country}}</b-td>
             <b-td style="vertical-align: middle">
-              <b-tr v-for="(mod, a) in retrieveModsByOrg(item.id)" :key="a">
-                <span>{{ mod.name }}</span>
+              <b-tr v-for="(mod, a) in modOrg" :key="a">
+                  <p>{{retrieveModsByOrg(item.id)}}</p>
+                <span>{{ mod.username }}</span>
+                <span>{{ "MESAJE" }}</span>
+
               </b-tr>
             </b-td>
             <b-td style="vertical-align: middle">
-              <router-link
-                :to="'/organizations/' + item.id"
-              >
+              <router-link :to="'/organizations/' + item.id">
                 <b-button class="btn btn-info">Ver </b-button>
               </router-link>
-
             </b-td>
           </b-tr>
         </b-tbody>
@@ -73,7 +73,7 @@ export default {
     return {
       organizations: [],
       searchText: '',
-      modByOrg: [],
+      modOrg: [],
     };
   },
   methods: {
@@ -87,16 +87,16 @@ export default {
           console.log(e);
         });
     },
-    retrieveModsByOrg(id){
-    UserService.moderadoresByOrganization(id)
+    retrieveModsByOrg(id) {
+      UserService.moderadoresByOrganization(id)
         .then((response) => {
-          this.modByOrg = response.data;
-          console.log(response.data);
+          this.modOrg = response.data;
+          console.log(modOrg);
         })
         .catch((e) => {
           console.log(e);
         });
-  },
+    },
     refreshList() {
       this.retrieveOrganizations();
     },
@@ -118,12 +118,10 @@ export default {
 </script>
 
 <style scoped>
-
 .container {
   text-align: center;
   position: relative;
   min-height: 100vh;
-
 }
 
 @media (max-width: 768px) {

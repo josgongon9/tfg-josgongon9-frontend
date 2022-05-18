@@ -35,6 +35,19 @@ class UserService {
   moderadoresByOrganization(idOrg){
     return axios.get(API_URL + "moderadoresByOrganization?"+`idOrg=${idOrg}`, { headers: authHeader() });
   }
+  exportData(id){
+    return axios.get(API_URL + `exportData/${id}`, { headers: authHeader() });
+  }
+  delete(id){
+    return axios.delete(API_URL + `deleteUser/${id}`, { headers: authHeader() });
+  }
+
+  update(id, data) {
+    return axios.put(API_URL+`update/${id}`, data, { headers: authHeader() });
+  }
+
+  
+
 
 }
 

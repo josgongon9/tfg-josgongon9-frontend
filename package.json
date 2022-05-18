@@ -26,7 +26,8 @@
     "vue-js-list": "0.0.17",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.5.3",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.1",
