@@ -91,12 +91,14 @@
                 label="Días de Vacaciones:"
                 label-for="input-1"
               >
-                <b-form-input
+                 <b-form-spinbutton
                   id="input-1"
                   v-model="form.daysOfVacations"
                   name="daysOfVacations"
                   :disabled="isAdmin != true"
-                ></b-form-input>
+                  min="1"
+                  max="100"
+                ></b-form-spinbutton>
               </b-form-group>
 
               <div>
@@ -163,6 +165,7 @@ export default {
     this.form.accessToken = this.$store.state.auth.user.accessToken;
     this.form.daysOfVacations = this.$store.state.auth.user.daysOfVacations;
     this.getUserRol();
+    this.retrieveDays();
   },
   methods: {
     onSubmit() {
@@ -236,15 +239,15 @@ export default {
           });
       }
     },
-    /*getRol(value) {
-      if (value == 'ROLE_MODERATOR') {
-        return 'Moderador';
-      } else if (value == 'ROLE_USER') {
-        return 'Usuario';
-      } else if (value == 'ROLE_ADMIN') {
-        return 'Administrador';
-      }
-    },*/
+    retrieveDays() {
+      UserService.findById(this.$store.state.auth.user.id)
+        .then((response) => {
+          this.form.daysOfVacations = response.data.daysOfVacations;
+        })
+        .catch((e) => {
+          this.errores.push(e.response.data);
+        });
+    },
   },
 };
 </script>

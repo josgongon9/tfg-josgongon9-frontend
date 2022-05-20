@@ -76,11 +76,16 @@
       </div>
     </b-form>
 
-    <b-form v-else>
+    <b-form v-else class="succes-vac">
       <h4>¡Solicitada Correctamente!</h4>
-      <button class="btn btn-success" @click="newVacation">
-        Crear otra vacacion
-      </button>
+      <b-button-group>
+        <b-button variant="success" @click="newVacation"
+          >Crear otra vacacion
+        </b-button>
+        <b-button variant="primary" :to="{ name: 'vacations' }"
+          >Volver al listado
+        </b-button>
+      </b-button-group>
     </b-form>
     <div class="mt-4" v-if="errores && errores.length">
       <b-alert
@@ -118,7 +123,7 @@ export default {
     reset() {
       this.$refs.textareaform.reset();
       this.resultDate = '';
-      this.errores = []
+      this.errores = [];
     },
     handleSubmit() {
       this.errores.pop();
@@ -131,7 +136,7 @@ export default {
         }
       });
     },
-    
+
     calculateDate() {
       let startDate = moment(this.vacation.startDate);
       let endDate = moment(this.vacation.endDate);
@@ -154,11 +159,11 @@ export default {
         description: this.vacation.description,
         startDate: this.vacation.startDate,
         endDate: this.vacation.endDate,
+        resultDate: this.resultDate,
       };
       VacationDataService.create(data)
         .then((response) => {
           this.vacation.id = response.data.id;
-          console.log(response.data);
           this.submitted = true;
         })
         .catch((e) => {
@@ -175,6 +180,9 @@ export default {
 </script>
 
 <style>
+.succes-vac {
+  text-align: center;
+}
 .button-vaca {
   text-align: center;
 }

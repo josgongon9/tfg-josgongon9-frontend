@@ -27,8 +27,10 @@
         </b-input-group>
       </b-col>
       <b-col class="col-md-2">
-        <h4>Días restantes:</h4>
-        {{ daysOfVacations }}
+        <b-card border-variant="info" header="Días restantes" align="center"
+        >
+          <b-card-text> {{ daysOfVacations }}</b-card-text>
+        </b-card>
       </b-col>
     </b-row>
 
