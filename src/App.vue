@@ -14,6 +14,9 @@
         <li v-if="showModeratorBoard" class="nav-item">
           <router-link to="/mod" class="nav-link">Panel Moderador</router-link>
         </li>
+        <li v-if="showModeratorBoard" class="nav-item">
+          <router-link to="/organizations" class="nav-link">Organizaciones</router-link>
+        </li>
         <li class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link">Usuario</router-link>
         </li>
@@ -99,9 +102,10 @@ export default {
 </script>
 
 <style>
-.footer {
-  width: 100%;
-  min-height: 24vh;
+.container {
+  position: relative;
+  min-height: 100vh;
 }
+
 
 </style>

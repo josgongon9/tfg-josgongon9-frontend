@@ -4,7 +4,9 @@ import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 import TimeEntries from './views/TimeEntries.vue'
-import LogTime from './views/LogTime.vue'
+import LogTime from './views/LogTime.vue';
+import Organizations from './views/OrganizationsList.vue';
+
 
 Vue.use(Router);
 
@@ -38,6 +40,21 @@ export const router = new Router({
       component: Register
     },
     {
+      path: '/organizations',
+      name: "organizations",
+      component: Organizations
+    },
+    {
+      path: "/organizations/:id",
+      name: "organizations-details",
+      component: () => import('./views/Organization.vue')
+    },
+    {
+      path: "/organizations/add",
+      name: "add-organization",
+      component: () => import('./views/AddOrganization.vue')
+    },
+    {
       path: '/profile',
       name: 'profile',
       // lazy-loaded
@@ -60,6 +77,11 @@ export const router = new Router({
       name: 'user',
       // lazy-loaded
       component: () => import('./views/BoardUser.vue')
+    },
+    {
+      path: "/user/:id",
+      name: "viewUser",
+      component: () => import('./views/ViewUser.vue')
     },
     {
       path: "/vacations",

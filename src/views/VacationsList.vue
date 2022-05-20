@@ -1,91 +1,116 @@
 <template>
-  <div class="list row">
-    <div class="col-md-1">
-      <router-link v-if="currentUser" to="/add" class="btn btn-success"
-        >Añadir</router-link
-      >
-    </div>
+  <b-container class="container">
+    <b-row align-h="center" class="mt-5">
+      <h3>Mis vacaciones</h3>
+    </b-row>
 
-    <div class="col-md-8">
-      <div class="input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Introduce título..."
-          v-model="title"
-        />
-        <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            @click="searchTitle"
+    <b-row align-h="center">
+      <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
+        <router-link :to="{ name: 'add' }"
+          ><b-button size="md" class="btn btn-success"
+            >Añadir</b-button
+          ></router-link
+        >
+
+        <b-input-group>
+          <b-form-input
+            v-model="searchText"
+            size="md"
+            class="search-input"
+            placeholder="Buscar vacaciones."
+          ></b-form-input>
+          <b-input-group-append>
+            <b-button @click="searchTitle" size="md" class="search-b">
+              <font-awesome-icon icon="search" />
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </b-col>
+      <b-col class="col-md-2">
+        <b-card border-variant="info" header="Días restantes" align="center"
+        >
+          <b-card-text> {{ daysOfVacations }}</b-card-text>
+        </b-card>
+      </b-col>
+    </b-row>
+
+    <b-row v-if="vacations" align-h="center">
+      <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
+        <b-list-group>
+          <b-list-group-item
+            class="list-group-item"
+            :class="{ active: index == currentIndex }"
+            v-for="(vacation, index) in vacations"
+            :key="index"
+            @click="setActiveVacation(vacation, index)"
           >
-            Buscar
-          </button>
-        </div>
-      </div>
-    </div>
+            {{ vacation.title }}
+          </b-list-group-item>
+        </b-list-group>
+      </b-col>
 
-    <div class="col-md-2">
-      <h4>Días restantes:</h4>
-      {{ currentUser.daysOfVacation }}
-    </div>
-    <div class="col-md-6">
-      <h4>Mis vacaciones</h4>
-      <ul class="list-group">
-        <li
-          class="list-group-item"
-          :class="{ active: index == currentIndex }"
-          v-for="(vacation, index) in vacations"
-          :key="index"
-          @click="setActiveVacation(vacation, index)"
+      <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
+        <div>
+          <div v-if="currentVacation">
+            <h4>{{ currentVacation.title }}</h4>
+            <div>
+              <label><strong>Descripción:</strong></label>
+              {{ currentVacation.description }}
+            </div>
+            <div>
+              <label><strong>Estado:</strong></label>
+              {{ currentVacation.published ? 'Published' : 'Pending' }}
+            </div>
+            <div>
+              <label><strong>Fecha Inicio:</strong></label>
+              {{ currentVacation.startDate | dataFormat }}
+            </div>
+            <div>
+              <label><strong>Fecha Fin:</strong></label>
+              {{ currentVacation.endDate | dataFormat }}
+            </div>
+            <div>
+              <label><strong>Días solicitados:</strong></label>
+              {{
+                calculateDate(
+                  currentVacation.startDate,
+                  currentVacation.endDate
+                )
+              }}
+            </div>
+            <router-link
+              :to="'/vacations/' + currentVacation.id"
+              class="btn btn-warning"
+              >Editar</router-link
+            >
+          </div>
+          <div v-else>
+            <br />
+            <p>Por favor seleccione una...</p>
+          </div>
+        </div>
+      </b-col>
+    </b-row>
+    <b-row v-else align-h="center">
+      <b-card
+        class="card-vac"
+        bg-variant="dark"
+        text-variant="white"
+        title="No existen vacaciones"
+      >
+        <b-card-text> Aun no tienes vacaciones solicitadas. </b-card-text>
+        <router-link :to="{ name: 'add' }"
+          ><b-button variant="primary">Añadir vacaciones</b-button></router-link
         >
-          {{ vacation.title }}
-        </li>
-      </ul>
-    </div>
-    <div class="col-md-6">
-      <div v-if="currentVacation">
-        <h4>{{ currentVacation.title }}</h4>
-        <div>
-          <label><strong>Descripción:</strong></label>
-          {{ currentVacation.description }}
-        </div>
-        <div>
-          <label><strong>Estado:</strong></label>
-          {{ currentVacation.published ? 'Published' : 'Pending' }}
-        </div>
-        <div>
-          <label><strong>Fecha Inicio:</strong></label>
-          {{ currentVacation.startDate | dataFormat }}
-        </div>
-        <div>
-          <label><strong>Fecha Fin:</strong></label>
-          {{ currentVacation.endDate | dataFormat }}
-        </div>
-        <div>
-          <label><strong>Días solicitados:</strong></label>
-          {{
-            calculateDate(currentVacation.startDate, currentVacation.endDate)
-          }}
-        </div>
-        <router-link
-          :to="'/vacations/' + currentVacation.id"
-          class="btn btn-warning"
-          >Editar</router-link
-        >
-      </div>
-      <div v-else>
-        <br />
-        <p>Por favor seleccione una...</p>
-      </div>
-    </div>
-  </div>
+      </b-card>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import VacationDataService from '../services/VacationDataService';
 import moment from 'moment';
+import userService from '../services/user.service';
 export default {
   filters: {
     dataFormat: function (value) {
@@ -97,32 +122,50 @@ export default {
   name: 'vacations-list',
   data() {
     return {
+      errores: [],
       vacations: [],
       currentVacation: null,
       currentIndex: -1,
+      daysOfVacations: '',
+      searchText: '',
     };
-  },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    },
   },
   methods: {
     calculateDate(date1, date2) {
-      let start = moment(date1);
-      let end = moment(date2);
-      let duration = moment.duration(end.diff(start));
-      let days = duration.asDays();
-      return Math.round(days) + 1;
+      let startDate = moment(date1);
+      let endDate = moment(date2);
+      let count = 0;
+      let curDate = +startDate;
+      while (curDate <= +endDate) {
+        const dayOfWeek = new Date(curDate).getDay();
+        const isWeekend = dayOfWeek === 6 || dayOfWeek === 0;
+        if (!isWeekend) {
+          count++;
+        }
+        curDate = curDate + 24 * 60 * 60 * 1000;
+      }
+      return Math.round(count);
     },
+
     retrieveVacations() {
-      VacationDataService.getAll()
+      VacationDataService.getAllByUser(this.$store.state.auth.user.id)
         .then((response) => {
           this.vacations = response.data;
-          console.log(response.data);
+          this.retrieveDays();
         })
         .catch((e) => {
           console.log(e);
+        });
+    },
+
+    retrieveDays() {
+      userService
+        .findById(this.$store.state.auth.user.id)
+        .then((response) => {
+          this.daysOfVacations = response.data.daysOfVacations;
+        })
+        .catch((e) => {
+          this.errores.push(e.response.data);
         });
     },
     refreshList() {
@@ -141,42 +184,39 @@ export default {
           this.refreshList();
         })
         .catch((e) => {
-          console.log(e);
+          this.errores.push(e.response.data);
         });
     },
 
     searchTitle() {
-      VacationDataService.findByTitle(this.title)
+      VacationDataService.findByTitle(this.searchText)
         .then((response) => {
           this.vacations = response.data;
           console.log(response.data);
         })
         .catch((e) => {
-          console.log(e);
+          this.errores.push(e.response.data);
         });
     },
   },
   mounted() {
     this.retrieveVacations();
-    this.resultDate = calculateDate;
-    if (!this.currentUser) {
+    //this.resultDate = calculateDate;
+    /*if (!this.currentUser) {
       this.$router.push('/login');
-    }
+    }*/
   },
 };
 </script>
 
 <style>
-.list {
-  text-align: left;
-  max-width: 750px;
-  margin: auto;
+.btn-success {
+  position: absolute;
+  left: -65px;
 }
-.btn-success{
-position: absolute;
-left: 0px;
-
+.card-vac {
+  text-align: center;
+  height: 150px;
+  width: 900px;
 }
-
-      
 </style>

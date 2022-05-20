@@ -4,8 +4,12 @@ import authHeader from './auth-header';
 const API_URL = 'http://localhost:8080/api/';
 
 class VacationDataService {
+  getAllByUser(userId) {
+    return axios.get(API_URL+`vacations?userId=${userId}`, { headers: authHeader() });
+  }
+
   getAll() {
-    return axios.get(API_URL+"vacations", { headers: authHeader() });
+    return axios.get(API_URL+"vacationsAll", { headers: authHeader() });
   }
 
   get(id) {
@@ -29,7 +33,7 @@ class VacationDataService {
   }
 
   findByTitle(title) {
-    return axios.get(API_URL+`vacations?title=${title}`, { headers: authHeader() });
+    return axios.get(API_URL+`findByTitle?title=${title}`, { headers: authHeader() });
   }
 }
 

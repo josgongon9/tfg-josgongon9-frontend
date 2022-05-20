@@ -10,18 +10,12 @@ import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import {
-  faHome,
-  faUser,
-  faUserPlus,
-  faSignInAlt,
-  faSignOutAlt
-} from '@fortawesome/free-solid-svg-icons';
-import { faHatWizard } from '@fortawesome/free-solid-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 
 
-library.add(faHome, faUser, faUserPlus, faSignInAlt, faSignOutAlt);
-library.add(faHatWizard)
+
+library.add(fas,fab)
 
 
 Vue.config.productionTip = false;

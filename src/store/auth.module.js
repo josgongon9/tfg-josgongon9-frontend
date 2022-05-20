@@ -21,6 +21,10 @@ export const auth = {
         }
       );
     },
+   
+    update: function ({commit}, user) {
+      commit('refreshA', user)
+   },
     logout({ commit }) {
       AuthService.logout();
       commit('logout');
@@ -39,6 +43,9 @@ export const auth = {
     }
   },
   mutations: {
+    refreshA(state, user) {
+      state.user = user;
+    },
     loginSuccess(state, user) {
       state.status.loggedIn = true;
       state.user = user;
