@@ -46,7 +46,9 @@ class UserService {
     return axios.put(API_URL+`update/${id}`, data, { headers: authHeader() });
   }
 
-  
+  findById(id){
+    return axios.get(API_URL + `findById/${id}`, { headers: authHeader() });
+  }
 
 
 }

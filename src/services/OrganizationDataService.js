@@ -25,7 +25,7 @@ class OrganizationDataService {
   }
 
   findByName(name) {
-    return axios.get(API_URL+`organizations?name=${name}`, { headers: authHeader() });
+    return axios.get(API_URL+`findByName?name=${name}`, { headers: authHeader() });
   }
 
   updateUsers(id, idUser) {

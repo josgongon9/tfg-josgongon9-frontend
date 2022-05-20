@@ -20,7 +20,7 @@
             placeholder="Buscar organización."
           ></b-form-input>
           <b-input-group-append>
-            <b-button @click="searchTitle" size="md" class="search-b">
+            <b-button @click="searchName" size="md" class="search-b">
               <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
@@ -101,7 +101,7 @@ export default {
       this.retrieveOrganizations();
     },
     searchName() {
-      OrganizationDataService.findByName(this.name)
+      OrganizationDataService.findByName(this.searchText)
         .then((response) => {
           this.organizations = response.data;
           console.log(response.data);

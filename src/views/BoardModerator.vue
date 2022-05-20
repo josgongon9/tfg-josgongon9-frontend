@@ -45,7 +45,7 @@
             </b-td>
             <b-td style="vertical-align: middle">
               <router-link
-                :to="{ name: 'eliminarUsuario', params: { id: item.id } }"
+                :to="{ name: 'viewUser', params: { id: item.id } }"
               >
                 <b-button class="btn btn-info">Ver </b-button>
                 <b-button class="btn btn-danger">Eliminar</b-button>

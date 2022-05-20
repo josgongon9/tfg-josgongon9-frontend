@@ -17,7 +17,7 @@
               >
                 <b-form-input
                   id="usuario"
-                  v-model="form.username"
+                  v-model="currentUser.username"
                   name="usuario"
                   readonly
                 ></b-form-input>
@@ -30,7 +30,7 @@
               >
                 <b-form-input
                   id="input-1"
-                  v-model="form.email"
+                  v-model="currentUser.email"
                   type="email"
                   placeholder="someone@example.com"
                   name="correo electrónico"
@@ -38,28 +38,10 @@
                 ></b-form-input>
               </b-form-group>
 
-              <!-- <b-form-group label="Rol:" label-for="rol">
-                <b-form-select
-                  id="rol"
-                  v-model="form.roles"
-                  multiple
-                  :select-size="4"
-                  v-validate="'required'"
-                  name="rol"
-                >
-                  <option v-for="(item, index) in form.roles" :key="index">
-                    {{ item }}
-                  </option></b-form-select
-                >
-                <div v-if="errors.has('rol')" class="alert alert-danger">
-                  {{ 'Es necesario elegir mínimo un rol' }}
-                </div>
-              </b-form-group>-->
-
               <b-form-group label="Rol:" label-for="rol">
                 <b-form-checkbox-group
                   id="rol"
-                  v-model="form.roles"
+                  v-model="roles"
                   name="rol"
                   v-validate="'required'"
                   :disabled="isAdmin != true"
@@ -77,39 +59,26 @@
                 </div>
               </b-form-group>
 
-              <b-form-group id="token" label="Token:" label-for="input-1">
-                <b-form-input
-                  id="input-1"
-                  v-model="form.accessToken"
-                  name="token"
-                  readonly
-                ></b-form-input>
-              </b-form-group>
-
               <b-form-group
                 id="daysOfVacations"
                 label="Días de Vacaciones:"
                 label-for="input-1"
               >
-                <b-form-input
+                <b-form-spinbutton
                   id="input-1"
-                  v-model="form.daysOfVacations"
+                  v-model="currentUser.daysOfVacations"
                   name="daysOfVacations"
                   :disabled="isAdmin != true"
-                ></b-form-input>
+                  min="1"
+                  max="100"
+                ></b-form-spinbutton>
               </b-form-group>
 
               <div>
-                <b-button type="submit" class="save-button"
-                  >Guardar Cambios</b-button
-                >&nbsp;
                 <b-row align-h="center">
                   <div>
-                    <b-button
-                      class="btn btn-info mt-2"
-                      v-on:click="exportUser()"
-                      ><font-awesome-icon icon="download" /> Exportar
-                      Datos</b-button
+                    <b-button type="submit" class="btn btn-success mt-2"
+                      ><font-awesome-icon icon="save" /> Guardar Cambios </b-button
                     >&nbsp;
                     <b-button
                       class="btn btn-danger mt-2"
@@ -141,43 +110,42 @@
 <script>
 import UserService from '../services/user.service';
 export default {
-  name: 'Profile',
+  name: 'viewUser',
   data() {
     return {
       errores: [],
-      form: {
-        email: '',
-        daysOfVacations: '',
-        roles: [],
-      },
-      //userRol: [],
+      currentUser: [],
       show: true,
       isAdmin: false,
       isMod: false,
+      roles: [],
     };
   },
 
   mounted() {
-    this.form.email = this.$store.state.auth.user.email;
-    this.form.username = this.$store.state.auth.user.username;
-    this.form.accessToken = this.$store.state.auth.user.accessToken;
-    this.form.daysOfVacations = this.$store.state.auth.user.daysOfVacations;
+    this.getUser(this.$route.params.id);
     this.getUserRol();
   },
   methods: {
+    getUser(id) {
+      UserService.findById(id)
+        .then((response) => {
+          this.currentUser = response.data;
+          for (const element of response.data.roles) {
+            this.roles.push(element.name);
+          }
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     onSubmit() {
       this.errores.pop();
-      UserService.update(this.$store.state.auth.user.id, this.form)
+      this.currentUser.roles = this.roles;
+      UserService.update(this.currentUser.id, this.currentUser)
         .then((response) => {
           alert('Datos actualizados con éxito.');
-          this.$store.dispatch('auth/update', {
-            accessToken: this.$store.state.auth.user.accessToken,
-            email: this.form.email,
-            id: this.$store.state.auth.user.id,
-            roles: this.form.roles,
-            tokenType: this.$store.state.auth.user.tokenType,
-            username: this.$store.state.auth.user.username,
-          });
         })
         .catch((e) => {
           this.errores.push(e);
@@ -186,7 +154,6 @@ export default {
     getUserRol() {
       let roles = this.$store.state.auth.user.roles;
       for (const element of roles) {
-        this.form.roles.push(element);
         if (element == 'ROLE_MODERATOR') {
           this.isMod = true;
         }
@@ -197,7 +164,7 @@ export default {
     },
 
     exportUser() {
-      UserService.exportData(this.$store.state.auth.user.id)
+      UserService.exportData(this.currentUser.id)
         .then((response) => {
           if (response.status == 200) {
             const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -219,7 +186,7 @@ export default {
           'Está a punto de eliminar su cuenta. Este proceso no tiene marcha atrás,¿Seguro que desea continuar? '
         )
       ) {
-        UserService.delete(this.$store.state.auth.user.id)
+        UserService.delete(this.currentUser.id)
           .then((response) => {
             if (response.status == 204) {
               alert(
@@ -236,7 +203,7 @@ export default {
           });
       }
     },
-    /*getRol(value) {
+    getRol(value) {
       if (value == 'ROLE_MODERATOR') {
         return 'Moderador';
       } else if (value == 'ROLE_USER') {
@@ -244,7 +211,7 @@ export default {
       } else if (value == 'ROLE_ADMIN') {
         return 'Administrador';
       }
-    },*/
+    },
   },
 };
 </script>

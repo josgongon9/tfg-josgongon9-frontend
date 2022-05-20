@@ -79,6 +79,11 @@ export const router = new Router({
       component: () => import('./views/BoardUser.vue')
     },
     {
+      path: "/user/:id",
+      name: "viewUser",
+      component: () => import('./views/ViewUser.vue')
+    },
+    {
       path: "/vacations",
       name: "vacations",
       component: () => import('./views/VacationsList.vue')
