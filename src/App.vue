@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>bezKoder</a>
+      <a href class="navbar-brand" @click.prevent>josgongon</a>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
@@ -9,13 +9,22 @@
           </router-link>
         </li>
         <li v-if="showAdminBoard" class="nav-item">
-          <router-link to="/admin" class="nav-link">Admin Board</router-link>
+          <router-link to="/admin" class="nav-link">Panel administrador</router-link>
         </li>
         <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/mod" class="nav-link">Moderator Board</router-link>
+          <router-link to="/mod" class="nav-link">Panel Moderador</router-link>
+        </li>
+        <li v-if="showModeratorBoard" class="nav-item">
+          <router-link to="/organizations" class="nav-link">Organizaciones</router-link>
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+          <router-link v-if="currentUser" to="/user" class="nav-link">Usuario</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/time-entries" class="nav-link">Control Horario</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link v-if="currentUser" to="/vacations" class="nav-link">Vacaciones</router-link>
         </li>
       </div>
 
@@ -50,11 +59,20 @@
     <div class="container">
       <router-view />
     </div>
+    <div class="footer">
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script>
+import Footer from './views/Footer.vue'
+
 export default {
+  name: 'about',
+  components: {
+    Footer
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -82,3 +100,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.container {
+  position: relative;
+  min-height: 100vh;
+}
+
+
+</style>

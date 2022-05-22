@@ -1,21 +1,27 @@
 <template>
   <b-container class="container">
     <b-row align-h="center" class="mt-5">
-      <h3>Todos los usuarios</h3>
+      <h3>Organizaciones</h3>
     </b-row>
 
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
+        <router-link :to="{ name: 'add-organization' }"
+          ><b-button size="md" class="btn btn-success"
+            >Añadir</b-button
+          ></router-link
+        >
+
         <b-input-group>
           <b-form-input
             v-model="searchText"
             size="md"
             class="search-input"
-            placeholder="Buscar usuario."
+            placeholder="Buscar organización."
           ></b-form-input>
           <b-input-group-append>
-            <b-button @click="searchTitle" size="md" class="search-b">
-             <font-awesome-icon icon="search"/>
+            <b-button @click="searchName" size="md" class="search-b">
+              <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -26,29 +32,29 @@
       <b-table-simple striped responsive>
         <b-thead>
           <b-tr>
-            <b-th>Usuario</b-th>
-            <b-th>Email</b-th>
-            <b-th>Roles</b-th>
+            <b-th>Nombre</b-th>
+            <b-th>Dirección</b-th>
+            <b-th>Moderadores</b-th>
             <b-th>Acción</b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
-          <b-tr v-for="(item, index) in items" :key="index">
+          <b-tr v-for="(item, index) in organizations" :key="index">
             <b-td style="vertical-align: middle">
-              <span>{{ item.username }}</span>
+              <span>{{ item.name }}</span>
             </b-td>
-            <b-td style="vertical-align: middle">{{ item.email }}</b-td>
+            <b-td style="vertical-align: middle">{{ item.province +", " + item.city +", " + item.country}}</b-td>
             <b-td style="vertical-align: middle">
-              <b-tr v-for="(rol, a) in item.roles" :key="a">
-                <span>{{ rol.name | getRol }}</span>
+              <b-tr v-for="(mod, a) in modOrg" :key="a">
+                  <p>{{retrieveModsByOrg(item.id)}}</p>
+                <span>{{ mod.username }}</span>
+                <span>{{ "MESAJE" }}</span>
+
               </b-tr>
             </b-td>
             <b-td style="vertical-align: middle">
-              <router-link
-                :to="{ name: 'viewUser', params: { id: item.id } }"
-              >
+              <router-link :to="'/organizations/' + item.id">
                 <b-button class="btn btn-info">Ver </b-button>
-                <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
           </b-tr>
@@ -59,45 +65,45 @@
 </template>
 
 <script>
+import OrganizationDataService from '../services/OrganizationDataService';
 import UserService from '../services/user.service';
-
 export default {
-  name: 'Moderator',
+  name: 'organizations',
   data() {
     return {
-      items: [],
+      organizations: [],
       searchText: '',
+      modOrg: [],
     };
   },
-  filters: {
-    getRol: function (value) {
-      if (value == 'ROLE_MODERATOR') {
-        return 'Moderador';
-      } else if (value == 'ROLE_USER') {
-        return 'Usuario';
-      } else if (value == 'ROLE_ADMIN') {
-        return 'Administrador';
-      }
-    },
-  },
   methods: {
-    retrieveUsers() {
-      UserService.getAllUsers()
+    retrieveOrganizations() {
+      OrganizationDataService.getAll()
         .then((response) => {
-          this.items = response.data;
+          this.organizations = response.data;
           console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    refreshList() {
-      this.retrieveUsers();
-    },
-    searchTitle() {
-      UserService.findByUser(this.searchText)
+    retrieveModsByOrg(id) {
+      UserService.moderadoresByOrganization(id)
         .then((response) => {
-          this.items = response.data;
+          this.modOrg = response.data;
+          console.log(modOrg);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    refreshList() {
+      this.retrieveOrganizations();
+    },
+    searchName() {
+      OrganizationDataService.findByName(this.searchText)
+        .then((response) => {
+          this.organizations = response.data;
           console.log(response.data);
         })
         .catch((e) => {
@@ -106,20 +112,16 @@ export default {
     },
   },
   mounted() {
-    this.retrieveUsers();
+    this.retrieveOrganizations();
   },
 };
 </script>
 
 <style scoped>
-
-.btn-info {
-    text-align: center;
-   width: 30%;
-   margin-right: 5px;
-  }
 .container {
   text-align: center;
+  position: relative;
+  min-height: 100vh;
 }
 
 @media (max-width: 768px) {
@@ -184,5 +186,9 @@ export default {
   border-bottom: 1px solid #ced4da !important;
   border-right: 0 !important;
   box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
+}
+.btn-success {
+  position: absolute;
+  left: -65px;
 }
 </style>
