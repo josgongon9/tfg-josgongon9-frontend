@@ -19,4 +19,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "tfg-josgongon9-frontend" #Must be unique in Heroku
           heroku_email: "josemiguelgonzalez14@hotmail.com"
-          remote_branch: "master"
+          branch: "master"
