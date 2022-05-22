@@ -19,7 +19,8 @@
       
       <div class="list-group">
 
-        <a class="list-group-item" v-for="timeEntry in timeEntries" >
+        <a class="list-group-item" v-for="timeEntry in timeEntries" :key="timeEntry.id"
+             >
           <div class="row">
 
             <div class="col-sm-2 user-details">
@@ -62,6 +63,7 @@
 </template>
 
 <script>
+/* eslint-disable */
   import LogTime from '../views/LogTime.vue'
   import TimeEntryDataService from "../services/TimeEntryDataService";
   export default {
