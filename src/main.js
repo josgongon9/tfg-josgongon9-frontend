@@ -26,6 +26,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(Vuex);
 
+
 new Vue({
   router,
   store,

@@ -1,6 +1,8 @@
 {
-  "name": "vue-jwt-example",
+  "name": "josgongon9-tfg-frontend",
   "version": "0.1.0",
+  "description": "Proyecto Fin de Grado",
+  "author": "Jose Miguel Gonzalez",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -13,10 +15,11 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^2.0.6",
-    "axios": "^0.19.2",
+    "acorn": "^8.7.1",
+    "axios": "^0.27.2",
     "bootstrap": "^4.6.1",
     "bootstrap-vue": "^2.21.2",
-    "core-js": "^2.6.12",
+    "core-js": "^3.22.5",
     "i18n-iso-countries": "^7.4.0",
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
@@ -30,28 +33,12 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-plugin-eslint": "^3.12.1",
-    "@vue/cli-service": "^3.12.1",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "@vue/cli-plugin-babel": "^5.0.4",
+    "@vue/cli-service": "^5.0.4",
+    "mini-css-extract-plugin": "^2.6.0",
+    "postcss": "^8.4.14",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.14"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "rules": {},
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
   },
   "postcss": {
     "plugins": {
