@@ -1,3 +1,5 @@
+const path = require('path',)
+
 module.exports = {
   /*axios: {
     proxy: true,
@@ -8,8 +10,12 @@ module.exports = {
     "/api/": process.env.PROXY_API || "http://localhost:8080/"
   },*/
   devServer: {
-    proxy: `${process.env.PROXY_API}`,
-
+    proxy: {
+      "/api/":{
+        tarfet: process.env.PROXY_API || "http://localhost:8080/"
+      } 
+    }
   }
 
 }
+
