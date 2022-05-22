@@ -10,35 +10,12 @@ on:
       - master
 
 jobs:
-  build:
+   build:
     runs-on: ubuntu-latest
-
     steps:
-    #- name: Analyze with SonarCloud         
-     # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
-      #env:
-       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
-        #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
-      #with:
-       # args:             
-        #  -Dsonar.projectKey=josgongon9_tfg-josgongon9-frontend
-         # -Dsonar.organization=josgongon9
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-node@v3
-      with:
-          node-version: '14'
-    - name: npm install
-      run: |
-        npm install
-    - name: npm build
-      run: npm build --if-present
-    - name: Add heroku remote
-      if: ${{success()}}
-      run: |
-        echo Success
-        git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-    - name: Deploy to heroku
-      run: |
-        git push heroku master
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: tfg-josgongon9-frontend #Must be unique in Heroku
+          heroku_email: josemiguelgonzalez14@hotmail.com
