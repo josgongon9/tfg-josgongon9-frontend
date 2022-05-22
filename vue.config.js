@@ -8,9 +8,7 @@ module.exports = {
     "/api/": process.env.PROXY_API || "http://localhost:8080/"
   },*/
   devServer: {
-    proxy: `${process.env.PROXY_API}`,
-    disableHostCheck: true
-
+    proxy: `"/api/"+${process.env.PROXY_API}`,
   }
 
 }
