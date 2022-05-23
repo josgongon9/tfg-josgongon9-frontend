@@ -23,5 +23,11 @@ module.exports = {
   devServer: {
     // 'auto' | 'all' [string] here
     allowedHosts: 'all',
+    https: true,
+    proxy: {
+      "/api/":{
+        target: process.env.PROXY_API || "http://localhost:8080/"
+      } 
+    }
   },
 };
