@@ -23,7 +23,6 @@ module.exports = {
   devServer: {
     // 'auto' | 'all' [string] here
     allowedHosts: 'all',
-    server: 'https',
     proxy: {
       "/api/": {
         target: "https://tfg-josgongon9-backend.herokuapp.com/"
