@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from './auth-header';
 
-const API_URL = 'http://localhost:8080/api/organization/';
+const API_URL = `${process.env.VUE_APP_PROXY_API}/api/organization/`;
 
 class OrganizationDataService {
   getAll() {

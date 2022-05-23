@@ -25,7 +25,8 @@ module.exports = {
     allowedHosts: 'all',
     proxy: {
       "/api/": {
-        target: "https://tfg-josgongon9-backend.herokuapp.com/"
+        target: "https://tfg-josgongon9-backend.herokuapp.com/",
+        secure: false,
       }
     }
   },
