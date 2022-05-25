@@ -7,6 +7,7 @@
           id="name"
           v-model="organization.name"
           readonly
+          name="name"
         >
         </b-form-input>
         <div v-if="errors.has('name')" class="alert alert-danger">
@@ -108,6 +109,7 @@
           <b-button type="submit" variant="success">Actualizar</b-button>
           <b-button v-b-modal.modal-1>Gestionar usuarios</b-button>
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
+          <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>
 
           <b-button @click="showDismissibleAlert = true" variant="danger">
             Borrar
@@ -166,9 +168,9 @@
                   </b-td>
                   <b-td style="vertical-align: middle">{{ item.email }}</b-td>
                   <b-td style="vertical-align: middle">
-                    <b-tr v-for="(rol, a) in item.roles" :key="a">
+                    <div v-for="(rol, a) in item.roles" :key="a">
                       <span>{{ rol.name | getRol }}</span>
-                    </b-tr>
+                    </div>
                   </b-td>
                   <b-td
                     style="vertical-align: middle"
@@ -230,9 +232,9 @@
                   </b-td>
                   <b-td style="vertical-align: middle">{{ mod.email }}</b-td>
                   <b-td style="vertical-align: middle">
-                    <b-tr v-for="(rol, a) in mod.roles" :key="a">
+                    <div v-for="(rol, a) in mod.roles" :key="a">
                       <span>{{ rol.name | getRol }}</span>
-                    </b-tr>
+                    </div>
                   </b-td>
                   <b-td
                     style="vertical-align: middle"
@@ -244,6 +246,78 @@
                   </b-td>
                   <b-td style="vertical-align: middle" v-else>
                     <b-button class="btn btn-danger" @click="addMods(mod.id)"
+                      >Eliminar</b-button
+                    >
+                  </b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+          </b-row>
+        </b-container>
+      </b-modal>
+      <b-modal id="modal-3" title="Gestión Alertas" size="xl">
+        <b-container class="container">
+          <b-row align-h="center" class="mt-5">
+            <h3>Todas las alertas</h3>
+          </b-row>
+
+          <b-row align-h="center">
+            <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
+              <router-link
+                :to="{
+                  name: 'add-alert',
+                  params: { id: this.organization.id },
+                }"
+                ><b-button size="md" class="btn btn-success"
+                  >Añadir</b-button
+                ></router-link
+              >
+              <b-input-group>
+                <b-form-input
+                  v-model="searchName"
+                  size="md"
+                  class="search-input"
+                  placeholder="Buscar alerta."
+                ></b-form-input>
+                <b-input-group-append>
+                  <b-button @click="searchByName" size="md" class="search-b">
+                    <font-awesome-icon icon="search" />
+                  </b-button>
+                </b-input-group-append>
+              </b-input-group>
+            </b-col>
+          </b-row>
+
+          <b-row align-h="center" class="mb-5">
+            <b-table-simple striped responsive>
+              <b-thead>
+                <b-tr>
+                  <b-th>Nombre</b-th>
+                  <b-th>Descripción</b-th>
+                  <b-th>Fecha creación</b-th>
+                  <b-th>Acción</b-th>
+                </b-tr>
+              </b-thead>
+              <b-tbody>
+                <b-tr v-for="(item, index) in alerts" :key="index">
+                  <b-td style="vertical-align: middle">
+                    <span>{{ item.name }}</span>
+                  </b-td>
+                  <b-td style="vertical-align: middle">{{ item.email }}</b-td>
+                  <b-td style="vertical-align: middle">{{ item.f_alta }}</b-td>
+
+                  <b-td
+                    style="vertical-align: middle"
+                    v-if="getContainsUser(item) == false"
+                  >
+                    <b-button class="btn btn-info" @click="addAlert(item.id)"
+                      >Añadir
+                    </b-button>
+                  </b-td>
+                  <b-td style="vertical-align: middle" v-else>
+                    <b-button
+                      class="btn btn-danger"
+                      @click="deleteAlert(item.id)"
                       >Eliminar</b-button
                     >
                   </b-td>
@@ -276,6 +350,7 @@
 <script>
 import UserService from '../services/user.service';
 import OrganizationDataService from '../services/OrganizationDataService';
+import AlertDataService from '../services/AlertDataService';
 const countries = require('i18n-iso-countries');
 countries.registerLocale(require('i18n-iso-countries/langs/es.json'));
 export default {
@@ -290,7 +365,20 @@ export default {
       searchText: '',
       modByOrg: [],
       showDismissibleAlert: false,
+      alerts: [],
+      searchName: '',
     };
+  },
+  filters: {
+    getRol: function (value) {
+      if (value == 'ROLE_MODERATOR') {
+        return 'Moderador';
+      } else if (value == 'ROLE_USER') {
+        return 'Usuario';
+      } else if (value == 'ROLE_ADMIN') {
+        return 'Administrador';
+      }
+    },
   },
   methods: {
     addUsers(idUser) {
@@ -317,7 +405,6 @@ export default {
       UserService.getAllByRol('ROLE_USER')
         .then((response) => {
           this.items = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
@@ -331,7 +418,15 @@ export default {
       UserService.findByUser(this.searchText)
         .then((response) => {
           this.items = response.data;
-          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    searchByName() {
+      AlertDataService.findByName(this.searchName)
+        .then((response) => {
+          this.alerts = response.data;
         })
         .catch((e) => {
           console.log(e);
@@ -341,7 +436,6 @@ export default {
       UserService.getAllByRol('ROLE_MODERATOR')
         .then((response) => {
           this.moderadorList = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
@@ -351,7 +445,6 @@ export default {
       OrganizationDataService.get(id)
         .then((response) => {
           this.organization = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
@@ -361,8 +454,7 @@ export default {
     updateOrganization() {
       OrganizationDataService.update(this.organization.id, this.organization)
         .then((response) => {
-          console.log(response.data);
-          this.message = 'The organization was updated successfully!';
+          this.message = '¡La organización se ha actualizado correctamente!';
         })
         .catch((e) => {
           console.log(e);
@@ -371,7 +463,6 @@ export default {
     deleteOrganization() {
       OrganizationDataService.delete(this.organization.id)
         .then((response) => {
-          console.log(response.data);
           this.$router.push({ name: 'organizations' });
         })
         .catch((e) => {
@@ -379,31 +470,24 @@ export default {
         });
     },
     getContainsUser(item) {
-      console.log('Contiene Usuarios');
       let res = this.organization.usuarios.some(
         (usuario) => usuario.id === item.id
       );
-      console.log(res);
+
       return res;
     },
-    getContainsMod(item) {
-      console.log('Contiene Moderadores');
-      UserService.moderadoresByOrganization(this.$route.params.id)
-        .then((response) => {
-          this.modByOrg = response.data;
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
 
-      let res = this.organization.usuarios.some(
-        (usuario) => usuario.id === item.id
+    getContainsMod(mod) {
+      console.log('contiene mods');
+
+      let res = mod.organizations.some(
+        (organization) => organization.id === this.$route.params.id
       );
       console.log(res);
       return res;
     },
   },
+
   mounted() {
     this.message = '';
     this.getOrganization(this.$route.params.id);

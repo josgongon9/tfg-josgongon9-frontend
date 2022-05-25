@@ -97,6 +97,16 @@ export const router = new Router({
       path: "/add",
       name: "add",
       component: () => import('./views/AddVacation.vue')
+    },
+    {
+      path: "/alerts",
+      name: "alerts",
+      component: () => import('./views/AlertsList.vue')
+    },
+    {
+      path: "/add-alert",
+      name: "add-alert",
+      component: () => import('./views/AddAlert.vue')
     }
   ]
 });

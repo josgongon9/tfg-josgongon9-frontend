@@ -15,7 +15,7 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button @click="searchTitle" size="md" class="search-b">
-             <font-awesome-icon icon="search"/>
+              <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
         </b-input-group>
@@ -39,14 +39,12 @@
             </b-td>
             <b-td style="vertical-align: middle">{{ item.email }}</b-td>
             <b-td style="vertical-align: middle">
-              <b-tr v-for="(rol, a) in item.roles" :key="a">
+              <div v-for="(rol, a) in item.roles" :key="a">
                 <span>{{ rol.name | getRol }}</span>
-              </b-tr>
+              </div>
             </b-td>
             <b-td style="vertical-align: middle">
-              <router-link
-                :to="{ name: 'viewUser', params: { id: item.id } }"
-              >
+              <router-link :to="{ name: 'viewUser', params: { id: item.id } }">
                 <b-button class="btn btn-info">Ver </b-button>
                 <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
@@ -112,12 +110,11 @@ export default {
 </script>
 
 <style scoped>
-
 .btn-info {
-    text-align: center;
-   width: 30%;
-   margin-right: 5px;
-  }
+  text-align: center;
+  width: 30%;
+  margin-right: 5px;
+}
 .container {
   text-align: center;
 }
@@ -128,61 +125,10 @@ export default {
     padding-top: 2%;
     margin-left: 25%;
   }
-
-  .div-buttons {
-    text-align: center;
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 
 .cursiva {
   font-style: italic;
   font-size: 14px;
-}
-
-.div-buttons {
-  text-align: center;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 5%;
-}
-
-.search-b {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(245, 245, 245) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
-.search-b:hover {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(233, 233, 233) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
-.search-b:focus {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(233, 233, 233) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-  box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
-}
-
-.search-input {
-  border-radius: 4px 0px 0px 4px !important;
-  border-right: 0 !important;
-}
-
-.search-input:focus {
-  border-radius: 4px 0px 0px 4px !important;
-  border-top: 1px solid #ced4da !important;
-  border-left: 1px solid #ced4da !important;
-  border-bottom: 1px solid #ced4da !important;
-  border-right: 0 !important;
-  box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
 }
 </style>
