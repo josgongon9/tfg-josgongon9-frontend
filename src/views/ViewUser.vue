@@ -7,7 +7,7 @@
           align-self="center"
           style="max-width: 400px"
         >
-          <h3>Modificar mi usuario:</h3>
+          <h3>Visualizar usuario:</h3>
           <div class="mx-auto">
             <b-form @submit.prevent="onSubmit" v-if="show">
               <b-form-group
@@ -74,6 +74,19 @@
                 ></b-form-spinbutton>
               </b-form-group>
 
+              <b-form-group
+                id="organization"
+                label="Organización:"
+                label-for="input-1"
+              >
+                <b-form-input
+                  id="input-1"
+                  name="organization"
+                  readonly
+                  v-model="organization.name"
+                ></b-form-input>
+              </b-form-group>
+
               <div>
                 <b-row align-h="center">
                   <div>
@@ -109,6 +122,7 @@
 
 <script>
 import UserService from '../services/user.service';
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
   name: 'viewUser',
   data() {
@@ -119,12 +133,14 @@ export default {
       isAdmin: false,
       isMod: false,
       roles: [],
+      organization: '',
     };
   },
 
   mounted() {
     this.getUser(this.$route.params.id);
     this.getUserRol();
+    this.getOrganization(this.$route.params.id);
   },
   methods: {
     getUser(id) {
@@ -161,6 +177,16 @@ export default {
           this.isAdmin = true;
         }
       }
+    },
+
+    getOrganization(id) {
+      OrganizationDataService.findByUserId(id)
+        .then((response) => {
+          this.organization = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
 
     exportUser() {

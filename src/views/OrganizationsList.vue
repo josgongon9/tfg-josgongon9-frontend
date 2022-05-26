@@ -6,8 +6,8 @@
 
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
-        <router-link :to="{ name: 'add-organization' }"
-          ><b-button size="md" class="btn btn-success"
+        <router-link :to="{ name: 'add-organization' }" v-if="isAdmin">
+          <b-button size="md" class="btn btn-success"
             >Añadir</b-button
           ></router-link
         >
@@ -34,7 +34,6 @@
           <b-tr>
             <b-th>Nombre</b-th>
             <b-th>Dirección</b-th>
-            <b-th>Moderadores</b-th>
             <b-th>Acción</b-th>
           </b-tr>
         </b-thead>
@@ -43,15 +42,10 @@
             <b-td style="vertical-align: middle">
               <span>{{ item.name }}</span>
             </b-td>
-            <b-td style="vertical-align: middle">{{ item.province +", " + item.city +", " + item.country}}</b-td>
-            <b-td style="vertical-align: middle">
-              <b-tr v-for="(mod, a) in modOrg" :key="a">
-                  <p>{{retrieveModsByOrg(item.id)}}</p>
-                <span>{{ mod.username }}</span>
-                <span>{{ "MESAJE" }}</span>
+            <b-td style="vertical-align: middle">{{
+              item.province + ', ' + item.city + ', ' + item.country
+            }}</b-td>
 
-              </b-tr>
-            </b-td>
             <b-td style="vertical-align: middle">
               <router-link :to="'/organizations/' + item.id">
                 <b-button class="btn btn-info">Ver </b-button>
@@ -76,35 +70,52 @@ export default {
       modOrg: [],
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    isAdmin() {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_ADMIN');
+      }
+
+      return false;
+    },
+  },
   methods: {
     retrieveOrganizations() {
       OrganizationDataService.getAll()
         .then((response) => {
           this.organizations = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    retrieveModsByOrg(id) {
+    /* retrieveModsByOrg(id) {
       UserService.moderadoresByOrganization(id)
         .then((response) => {
-          this.modOrg = response.data;
-          console.log(modOrg);
+          let res = response.data;
+          for (const mod of res) {
+            this.modOrg.push(mod);
+          }
         })
         .catch((e) => {
           console.log(e);
         });
-    },
+    },*/
+
     refreshList() {
       this.retrieveOrganizations();
+    },
+    getName: function (id) {
+      this.retrieveModsByOrg(id);
+      return this.modOrg;
     },
     searchName() {
       OrganizationDataService.findByName(this.searchText)
         .then((response) => {
           this.organizations = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);

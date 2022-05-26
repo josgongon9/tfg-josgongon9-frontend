@@ -111,9 +111,11 @@
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
           <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>
 
+          <div v-if="isAdmin">
           <b-button @click="showDismissibleAlert = true" variant="danger">
             Borrar
           </b-button>
+          </div>
           <b-modal
             v-model="showDismissibleAlert"
             variant="danger"
@@ -238,7 +240,7 @@
                   </b-td>
                   <b-td
                     style="vertical-align: middle"
-                    v-if="getContainsMod(mod) == false"
+                    v-if="getContainsMod(mod,index) == false"
                   >
                     <b-button class="btn btn-info" @click="addMods(mod.id)"
                       >Añadir
@@ -363,7 +365,6 @@ export default {
       submitted: false,
       items: [],
       searchText: '',
-      modByOrg: [],
       showDismissibleAlert: false,
       alerts: [],
       searchName: '',
@@ -395,7 +396,7 @@ export default {
       OrganizationDataService.updateMods(this.organization.id, idMod)
         .then((response) => {
           console.log(response.data);
-          this.getOrganization(this.$route.params.id);
+          this.retrieveMods();
         })
         .catch((e) => {
           console.log(e);
@@ -473,17 +474,22 @@ export default {
       let res = this.organization.usuarios.some(
         (usuario) => usuario.id === item.id
       );
+      console.log(res);
+
 
       return res;
     },
 
-    getContainsMod(mod) {
-      console.log('contiene mods');
+    getContainsMod(mod,index) {
+      //console.log('contiene mods');
 
       let res = mod.organizations.some(
         (organization) => organization.id === this.$route.params.id
       );
-      console.log(res);
+
+      //this.moderadorList.splice(index,1,mod)
+
+      //console.log(res);
       return res;
     },
   },
@@ -499,6 +505,23 @@ export default {
     countries() {
       const list = countries.getNames('es', { select: 'official' });
       return Object.keys(list).map((key) => ({ value: key, label: list[key] }));
+    },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    isAdmin() {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_ADMIN');
+      }
+
+      return false;
+    },
+    isMod() {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_MODERATOR');
+      }
+
+      return false;
     },
   },
 };

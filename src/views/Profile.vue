@@ -101,6 +101,20 @@
                 ></b-form-spinbutton>
               </b-form-group>
 
+
+                <b-form-group
+                id="organization"
+                label="Organización:"
+                label-for="input-1"
+              >
+                 <b-form-input
+                  id="input-1"
+                  name="organization"
+                  readonly
+                  v-model="organization.name"
+                ></b-form-input>
+              </b-form-group>
+
               <div>
                 <b-button type="submit" class="save-button"
                   >Guardar Cambios</b-button
@@ -142,6 +156,7 @@
 
 <script>
 import UserService from '../services/user.service';
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
   name: 'Profile',
   data() {
@@ -151,7 +166,9 @@ export default {
         email: '',
         daysOfVacations: '',
         roles: [],
+        
       },
+      organization:'',
       //userRol: [],
       show: true,
       isAdmin: false,
@@ -166,6 +183,7 @@ export default {
     this.form.daysOfVacations = this.$store.state.auth.user.daysOfVacations;
     this.getUserRol();
     this.retrieveDays();
+    this.getOrganization(this.$store.state.auth.user.id);
   },
   methods: {
     onSubmit() {
@@ -197,6 +215,16 @@ export default {
           this.isAdmin = true;
         }
       }
+    },
+
+    getOrganization(id) {
+      OrganizationDataService.findByUserId(id)
+        .then((response) => {
+          this.organization = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
 
     exportUser() {

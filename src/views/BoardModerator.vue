@@ -1,7 +1,7 @@
 <template>
   <b-container class="container">
     <b-row align-h="center" class="mt-5">
-      <h3>Todos los usuarios</h3>
+      <h3>Usuarios de mis organizaciones</h3>
     </b-row>
 
     <b-row align-h="center">
@@ -11,7 +11,7 @@
             v-model="searchText"
             size="md"
             class="search-input"
-            placeholder="Buscar usuario."
+            placeholder="Buscar por usuario."
           ></b-form-input>
           <b-input-group-append>
             <b-button @click="searchTitle" size="md" class="search-b">
@@ -19,6 +19,36 @@
             </b-button>
           </b-input-group-append>
         </b-input-group>
+        <b-form>
+          <b-form-group
+            label="o Seleccione una organización:"
+            label-for="options"
+          >
+            <b-form-select
+              id="options"
+              v-validate="'required'"
+              name="options"
+              v-model="selected"
+            >
+              <option
+                v-for="(item, index) in options"
+                :key="index"
+                v-bind:value="item.id"
+              >
+                {{ item.name }}
+              </option></b-form-select
+            >
+            <b-input-group-append>
+              <b-button
+                @click="retrieveUsersByMod(selected)"
+                size="md"
+                class="reload"
+              >
+                <font-awesome-icon icon="fas fa-redo" />
+              </b-button>
+            </b-input-group-append>
+          </b-form-group>
+        </b-form>
       </b-col>
     </b-row>
 
@@ -46,7 +76,6 @@
             <b-td style="vertical-align: middle">
               <router-link :to="{ name: 'viewUser', params: { id: item.id } }">
                 <b-button class="btn btn-info">Ver </b-button>
-                <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
           </b-tr>
@@ -58,13 +87,15 @@
 
 <script>
 import UserService from '../services/user.service';
-
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
   name: 'Moderator',
   data() {
     return {
       items: [],
       searchText: '',
+      selected: null,
+      options: [],
     };
   },
   filters: {
@@ -79,10 +110,21 @@ export default {
     },
   },
   methods: {
-    retrieveUsers() {
-      UserService.getAllUsers()
+    retrieveOrgByUser() {
+      UserService.findById(this.$store.state.auth.user.id)
         .then((response) => {
-          this.items = response.data;
+          this.options = response.data.organizations;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    retrieveUsersByMod(idOrg) {
+      OrganizationDataService.get(idOrg)
+        .then((response) => {
+          this.items = response.data.usuarios;
           console.log(response.data);
         })
         .catch((e) => {
@@ -104,7 +146,7 @@ export default {
     },
   },
   mounted() {
-    this.retrieveUsers();
+    this.retrieveOrgByUser();
   },
 };
 </script>
@@ -112,7 +154,7 @@ export default {
 <style scoped>
 .btn-info {
   text-align: center;
-  width: 30%;
+  width: 50%;
   margin-right: 5px;
 }
 .container {
@@ -130,5 +172,11 @@ export default {
 .cursiva {
   font-style: italic;
   font-size: 14px;
+}
+
+.reload {
+  position: relative;
+  left: 100%;
+  top: -38px;
 }
 </style>
