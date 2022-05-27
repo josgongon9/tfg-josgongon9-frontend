@@ -5,7 +5,7 @@ const API_URL = `${process.env.VUE_APP_PROXY_API}/api/alerts`;
 
 class AlertDataService {
   getAllByOrg(idOrg) {
-    return axios.get(API_URL+`?alertsByOrg/${idOrg}`, { headers: authHeader() });
+    return axios.get(API_URL+`/alertsByOrg/${idOrg}`, { headers: authHeader() });
   }
 
   getAll() {
@@ -29,7 +29,7 @@ class AlertDataService {
   }
 
   findByName(name) {
-    return axios.get(API_URL+`findByName?name=${name}`, { headers: authHeader() });
+    return axios.get(API_URL+`/findByName?name=${name}`, { headers: authHeader() });
   }
 }
 

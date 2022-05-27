@@ -1,5 +1,5 @@
 <template>
-  <b-container class="container">
+  <b-container class="container" v-if="organization">
     <b-row align-h="center" class="mt-5">
       <h3>Mis vacaciones</h3>
     </b-row>
@@ -27,8 +27,7 @@
         </b-input-group>
       </b-col>
       <b-col class="col-md-2">
-        <b-card border-variant="info" header="Días restantes" align="center"
-        >
+        <b-card border-variant="info" header="Días restantes" align="center">
           <b-card-text> {{ daysOfVacations }}</b-card-text>
         </b-card>
       </b-col>
@@ -105,12 +104,28 @@
       </b-card>
     </b-row>
   </b-container>
+  <b-container class="container" v-else>
+    <div>
+      <b-jumbotron bg-variant="info" text-variant="white" border-variant="dark">
+        <template #header>Vacaciones</template>
+
+        <template #lead>
+         ¡Vaya! Aun no perteneces a ninguna organización. Espera a que un moderador te incluya en una
+        </template>
+
+        <hr class="my-4" />
+
+       
+      </b-jumbotron>
+    </div>
+  </b-container>
 </template>
 
 <script>
 import VacationDataService from '../services/VacationDataService';
 import moment from 'moment';
 import userService from '../services/user.service';
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
   filters: {
     dataFormat: function (value) {
@@ -128,6 +143,7 @@ export default {
       currentIndex: -1,
       daysOfVacations: '',
       searchText: '',
+      organization: '',
     };
   },
   methods: {
@@ -188,6 +204,16 @@ export default {
         });
     },
 
+    getOrganization(id) {
+      OrganizationDataService.findByUserId(id)
+        .then((response) => {
+          this.organization = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
     searchTitle() {
       VacationDataService.findByTitle(this.searchText)
         .then((response) => {
@@ -201,10 +227,7 @@ export default {
   },
   mounted() {
     this.retrieveVacations();
-    //this.resultDate = calculateDate;
-    /*if (!this.currentUser) {
-      this.$router.push('/login');
-    }*/
+    this.getOrganization(this.$store.state.auth.user.id);
   },
 };
 </script>

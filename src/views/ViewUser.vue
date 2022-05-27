@@ -159,6 +159,9 @@ export default {
     onSubmit() {
       this.errores.pop();
       this.currentUser.roles = this.roles;
+      if(this.currentUser.roles.length > 1){
+        this.errores.push('No se permiten los multiperfilados');
+      }else{
       UserService.update(this.currentUser.id, this.currentUser)
         .then((response) => {
           alert('Datos actualizados con éxito.');
@@ -166,6 +169,7 @@ export default {
         .catch((e) => {
           this.errores.push(e);
         });
+      }
     },
     getUserRol() {
       let roles = this.$store.state.auth.user.roles;

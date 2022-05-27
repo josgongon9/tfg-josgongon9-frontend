@@ -39,6 +39,11 @@ class UserService {
     return axios.get(API_URL + `findById/${id}`, { headers: authHeader() });
   }
 
+  
+  findByUserRol(username,role ){
+    return axios.get(API_URL + "findByUserAndRol?"+`username=${username}`+`&role=${role}`, { headers: authHeader() });
+  }
+
 
 }
 

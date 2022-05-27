@@ -112,9 +112,9 @@
           <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>
 
           <div v-if="isAdmin">
-          <b-button @click="showDismissibleAlert = true" variant="danger">
-            Borrar
-          </b-button>
+            <b-button @click="showDismissibleAlert = true" variant="danger">
+              Borrar
+            </b-button>
           </div>
           <b-modal
             v-model="showDismissibleAlert"
@@ -203,13 +203,13 @@
             <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
               <b-input-group>
                 <b-form-input
-                  v-model="searchText"
+                  v-model="searchModText"
                   size="md"
                   class="search-input"
-                  placeholder="Buscar usuario."
+                  placeholder="Buscar moderador."
                 ></b-form-input>
                 <b-input-group-append>
-                  <b-button @click="searchTitle" size="md" class="search-b">
+                  <b-button @click="searchMod" size="md" class="search-b">
                     <font-awesome-icon icon="search" />
                   </b-button>
                 </b-input-group-append>
@@ -224,7 +224,8 @@
                   <b-th>Usuario</b-th>
                   <b-th>Email</b-th>
                   <b-th>Roles</b-th>
-                  <b-th>Acción</b-th>
+                  <b-th v-if="isAdmin">Acción</b-th>
+                  <b-th v-else>Moderadores</b-th>
                 </b-tr>
               </b-thead>
               <b-tbody>
@@ -240,16 +241,26 @@
                   </b-td>
                   <b-td
                     style="vertical-align: middle"
-                    v-if="getContainsMod(mod,index) == false"
+                    v-if="getContainsMod(mod, index) == false"
                   >
-                    <b-button class="btn btn-info" @click="addMods(mod.id)"
-                      >Añadir
-                    </b-button>
+                    <div v-if="isAdmin">
+                      <b-button class="btn btn-info" @click="addMods(mod.id)"
+                        >Añadir
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <font-awesome-icon icon="fas fa-times" />
+                    </div>
                   </b-td>
                   <b-td style="vertical-align: middle" v-else>
-                    <b-button class="btn btn-danger" @click="addMods(mod.id)"
-                      >Eliminar</b-button
-                    >
+                    <div v-if="isAdmin">
+                      <b-button class="btn btn-danger" @click="addMods(mod.id)"
+                        >Eliminar</b-button
+                      >
+                    </div>
+                    <div v-else>
+                      <font-awesome-icon icon="fas fa-check" />
+                    </div>
                   </b-td>
                 </b-tr>
               </b-tbody>
@@ -270,7 +281,7 @@
                   name: 'add-alert',
                   params: { id: this.organization.id },
                 }"
-                ><b-button size="md" class="btn btn-success"
+                ><b-button variant="success" class="add-alert"
                   >Añadir</b-button
                 ></router-link
               >
@@ -297,6 +308,7 @@
                   <b-th>Nombre</b-th>
                   <b-th>Descripción</b-th>
                   <b-th>Fecha creación</b-th>
+                  <b-th>Mostrar</b-th>
                   <b-th>Acción</b-th>
                 </b-tr>
               </b-thead>
@@ -305,23 +317,32 @@
                   <b-td style="vertical-align: middle">
                     <span>{{ item.name }}</span>
                   </b-td>
-                  <b-td style="vertical-align: middle">{{ item.email }}</b-td>
-                  <b-td style="vertical-align: middle">{{ item.f_alta }}</b-td>
+                  <b-td style="vertical-align: middle">{{
+                    item.description
+                  }}</b-td>
+                  <b-td style="vertical-align: middle">{{
+                    item.f_alta | dataFormat
+                  }}</b-td>
 
-                  <b-td
-                    style="vertical-align: middle"
-                    v-if="getContainsUser(item) == false"
-                  >
-                    <b-button class="btn btn-info" @click="addAlert(item.id)"
-                      >Añadir
-                    </b-button>
+                  <b-td style="vertical-align: middle">
+                    <b-input-group-append v-if="item.show == false">
+                      <b-button @click="showAlert(item, true, index)">
+                        <font-awesome-icon icon="fa-solid fa-eye" />
+                      </b-button>
+                    </b-input-group-append>
+
+                    <b-input-group-append v-else>
+                      <b-button @click="showAlert(item, false, index)">
+                        <font-awesome-icon icon="fa-solid fa-eye-slash" />
+                      </b-button>
+                    </b-input-group-append>
                   </b-td>
-                  <b-td style="vertical-align: middle" v-else>
+                  <b-td style="vertical-align: middle">
                     <b-button
                       class="btn btn-danger"
-                      @click="deleteAlert(item.id)"
-                      >Eliminar</b-button
-                    >
+                      @click="deleteAlert(item.id, index)"
+                      >Eliminar
+                    </b-button>
                   </b-td>
                 </b-tr>
               </b-tbody>
@@ -353,6 +374,8 @@
 import UserService from '../services/user.service';
 import OrganizationDataService from '../services/OrganizationDataService';
 import AlertDataService from '../services/AlertDataService';
+import moment from 'moment';
+
 const countries = require('i18n-iso-countries');
 countries.registerLocale(require('i18n-iso-countries/langs/es.json'));
 export default {
@@ -360,7 +383,7 @@ export default {
   data() {
     return {
       errores: [],
-      organization: null,
+      organization: [],
       moderadorList: [],
       submitted: false,
       items: [],
@@ -368,6 +391,7 @@ export default {
       showDismissibleAlert: false,
       alerts: [],
       searchName: '',
+      searchModText: '',
     };
   },
   filters: {
@@ -378,6 +402,11 @@ export default {
         return 'Usuario';
       } else if (value == 'ROLE_ADMIN') {
         return 'Administrador';
+      }
+    },
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY HH:mm');
       }
     },
   },
@@ -411,12 +440,32 @@ export default {
           console.log(e);
         });
     },
+    retrieveMods() {
+      UserService.getAllByRol('ROLE_MODERATOR')
+        .then((response) => {
+          this.moderadorList = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     refreshList() {
       this.retrieveUsers();
       this.retrieveMods();
+      this.retrieveAlerts();
     },
+    searchMod() {
+      UserService.findByUserRol(this.searchModText, 'ROLE_MODERATOR')
+        .then((response) => {
+          this.moderadorList = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
     searchTitle() {
-      UserService.findByUser(this.searchText)
+      UserService.findByUserRol(this.searchText, 'ROLE_USER')
         .then((response) => {
           this.items = response.data;
         })
@@ -433,15 +482,7 @@ export default {
           console.log(e);
         });
     },
-    retrieveMods() {
-      UserService.getAllByRol('ROLE_MODERATOR')
-        .then((response) => {
-          this.moderadorList = response.data;
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
+
     getOrganization(id) {
       OrganizationDataService.get(id)
         .then((response) => {
@@ -474,23 +515,51 @@ export default {
       let res = this.organization.usuarios.some(
         (usuario) => usuario.id === item.id
       );
-      console.log(res);
-
 
       return res;
     },
 
-    getContainsMod(mod,index) {
-      //console.log('contiene mods');
-
+    getContainsMod(mod, index) {
       let res = mod.organizations.some(
         (organization) => organization.id === this.$route.params.id
       );
 
-      //this.moderadorList.splice(index,1,mod)
-
-      //console.log(res);
       return res;
+    },
+    retrieveAlerts() {
+      AlertDataService.getAllByOrg(this.$route.params.id)
+        .then((response) => {
+          this.alerts = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    showAlert(item, status, index) {
+      var data = {
+        id: item.id,
+        title: item.name,
+        description: item.description,
+        show: status,
+      };
+      AlertDataService.update(item.id, data)
+        .then((response) => {
+          let replacementItem = response.data;
+          this.alerts.splice(index, 1, replacementItem);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    deleteAlert(id, index) {
+      AlertDataService.delete(id)
+        .then((response) => {
+          this.alerts.splice(index, 1);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
   },
 
@@ -499,7 +568,7 @@ export default {
     this.getOrganization(this.$route.params.id);
     this.retrieveMods();
     this.retrieveUsers();
-    this.getContainsUser(item);
+    this.retrieveAlerts();
   },
   computed: {
     countries() {
@@ -531,5 +600,11 @@ export default {
 .edit-form {
   max-width: 300px;
   margin: auto;
+}
+.add-alert {
+  position: relative;
+  margin: auto;
+  top: 38px;
+  right: 75px;
 }
 </style>
