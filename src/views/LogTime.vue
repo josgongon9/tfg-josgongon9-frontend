@@ -19,7 +19,7 @@
 
       <b-form-group label="Hora Inicio:" label-for="Hours">
         <b-form-timepicker
-          id="starTime"
+          id="startTime"
           name="startTime"
           v-model="newtimeEntry.startTime"
           v-validate="'required'"
@@ -54,7 +54,7 @@
       </b-form-group>
 
       <div id="date-result">
-        <p>Duración total: {{ resultDate }}</p>
+        <h5>Duración total: {{ totalTime }}</h5>
       </div>
 
       <b-form-group label="Comentario:" label-for="comment">
@@ -80,7 +80,7 @@
       <h4>¡Solicitada Correctamente!</h4>
       <b-button-group>
         <b-button variant="success" @click="newTime"
-          >Crear otra vacacion
+          >Crear otra entrada de tiempo
         </b-button>
         <b-button variant="primary" :to="{ name: 'timeEntries' }"
           >Volver al listado
@@ -106,8 +106,8 @@ import moment from 'moment';
 export default {
   data() {
     return {
-      resultDate: '',
-
+      totalTime: '',
+      hours: '',
       errores: [],
       submitted: false,
       newtimeEntry: {
@@ -123,32 +123,42 @@ export default {
     reset() {
       this.$refs.textareaform.reset();
       this.errores = [];
-      this.resultDate = '';
+      this.totalTime = '';
     },
     calculateDate() {
-      let startDate = this.newtimeEntry.startTime;
-      let endDate = this.newtimeEntry.endTime;
-            console.log("Prueba")
+      var startTime = moment(this.newtimeEntry.startTime, 'HH:mm:ss');
+      var endTime = moment(this.newtimeEntry.endTime, 'HH:mm:ss');
 
-      console.log(endDate-startDate)
-      
-      this.resultDate = endDate-startDate;
+      var mins = moment
+        .utc(moment(endTime, 'HH:mm:ss').diff(moment(startTime, 'HH:mm:ss')))
+        .format('mm');
+
+      if (
+        this.newtimeEntry.startTime != '' &&
+        this.newtimeEntry.endTime != ''
+      ) {
+        this.hours = endTime.diff(startTime, 'hours');
+        this.totalTime = this.hours + ':' + mins;
+      }
     },
     handleSubmit() {
       this.errores.pop();
       this.$validator.validate().then((valid) => {
-        if (valid) {
+        if (valid && this.hours >= 0) {
           this.create();
+        }
+        if (this.hours < 0) {
+          this.errores.push('La hora no puede ser negativa');
         }
       });
     },
     create() {
       var data = {
         date: this.newtimeEntry.date,
-        startTime: this.newtimeEntry.starTime,
+        startTime: this.newtimeEntry.startTime,
         endTime: this.newtimeEntry.endTime,
         comment: this.newtimeEntry.comment,
-        resultDate: this.resultDate,
+        totalTime: this.totalTime,
       };
       TimeEntryDataService.create(data)
         .then((response) => {

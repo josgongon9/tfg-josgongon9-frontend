@@ -29,6 +29,7 @@ export const router = new Router({
     },
     {
       path: '/time-entries/log-time',
+      name: "addTimeEntries",
       component: LogTime
     },
   

@@ -1,110 +1,341 @@
 <template>
-  <div>
-    <router-link
-      to="/time-entries/log-time"
-      v-if="$route.path !== '/time-entries/log-time'"
-      class="btn btn-primary"
-      tag="button"
-    >
-      Control horario
-    </router-link>
-
-    <div v-if="$route.path === '/time-entries/log-time'">
-      <h3>Control horario</h3>
-    </div>
-
-    <hr />
-
-
-    <div class="time-entries">
-      <p v-if="!timeEntries.length"><strong>No hay entradas</strong></p>
-
-      <div class="list-group">
-        <a
-          class="list-group-item"
-          v-for="timeEntry in timeEntries"
-          :key="timeEntry.id"
+  <b-container fluid v-if="organization">
+    <div>
+      <b-input-group>
+        <router-link :to="{ name: 'addTimeEntries' }"
+          ><b-button size="md" class="btn btn-success"
+            >Añadir</b-button
+          ></router-link
         >
-          <div class="row">
-            <div class="col-sm-2 user-details">
-              <p class="text-center">
-                <strong>
-                  {{ timeEntry.comment }}
-                </strong>
-              </p>
-            </div>
+        <b-button
+          :class="visible ? null : 'collapsed'"
+          :aria-expanded="visible ? 'true' : 'false'"
+          aria-controls="collapse-4"
+          @click="visible = !visible"
+          variant="primary"
+        >
+          Filtros
+        </b-button>
+      </b-input-group>
+      <b-collapse id="collapse-4" v-model="visible" class="mt-2">
+        <b-row>
+          <b-col lg="6" class="my-1">
+            <b-form-group
+              label="Ordenar"
+              label-for="sort-by-select"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+              v-slot="{ ariaDescribedby }"
+            >
+              <b-input-group size="sm">
+                <b-form-select
+                  id="sort-by-select"
+                  v-model="sortBy"
+                  :options="sortOptions"
+                  :aria-describedby="ariaDescribedby"
+                  class="w-75"
+                >
+                  <template #first>
+                    <option value="">----</option>
+                  </template>
+                </b-form-select>
 
-            <div class="col-sm-2 text-center time-block">
-              <h3 class="list-group-item-text total-time">
-                <i class="glyphicon glyphicon-time"></i>
-                {{ timeEntry.totalTime }} <small>horas</small>
-              </h3>
-              <p class="label label-primary text-center">
-                <i class="glyphicon glyphicon-calendar"></i>
-                {{ timeEntry.date }}
-              </p>
-            </div>
+                <b-form-select
+                  v-model="sortDesc"
+                  :disabled="!sortBy"
+                  :aria-describedby="ariaDescribedby"
+                  size="sm"
+                  class="w-25"
+                >
+                  <option :value="false">Ascedente</option>
+                  <option :value="true">Descendente</option>
+                </b-form-select>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
 
-            <div class="col-sm-7 comment-section">
-              <p>{{ timeEntry.comment }}</p>
-            </div>
+          <b-col lg="6" class="my-1"> </b-col>
 
-            <div class="col-sm-1">
-              <button
-                class="btn btn-xs btn-danger delete-button"
-                @click="deleteTimeEntry(timeEntry)"
+          <b-col lg="6" class="my-1">
+            <b-form-group
+              label="Filtro"
+              label-for="filter-input"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  id="filter-input"
+                  v-model="filter"
+                  type="search"
+                  placeholder="Escriba para buscar"
+                ></b-form-input>
+
+                <b-input-group-append>
+                  <b-button :disabled="!filter" @click="filter = ''"
+                    >Limpiar</b-button
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+
+          <b-col lg="6" class="my-1">
+            <b-form-group
+              v-model="sortDirection"
+              label="Filtro"
+              description="Dejar todo desmarcado para obtener todos los datos"
+              label-cols-sm="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+              v-slot="{ ariaDescribedby }"
+            >
+              <b-form-checkbox-group
+                v-model="filterOn"
+                :aria-describedby="ariaDescribedby"
+                class="mt-1"
               >
-                X
-              </button>
-            </div>
-          </div>
-        </a>
-      </div>
+                <b-form-checkbox value="comment">Comentario</b-form-checkbox>
+                <b-form-checkbox value="totalTime"
+                  >Duración Total</b-form-checkbox
+                >
+                <b-form-checkbox value="date">Fecha</b-form-checkbox>
+              </b-form-checkbox-group>
+            </b-form-group>
+          </b-col>
+
+          <b-col sm="5" md="6" class="my-1">
+            <b-form-group
+              label="Páginas"
+              label-for="per-ptotalTime-select"
+              label-cols-sm="6"
+              label-cols-md="4"
+              label-cols-lg="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-form-select
+                id="per-ptotalTime-select"
+                v-model="perPtotalTime"
+                :options="ptotalTimeOptions"
+                size="sm"
+              ></b-form-select>
+            </b-form-group>
+          </b-col>
+
+          <b-col sm="7" md="6" class="my-1">
+            <b-pagination
+              v-model="currentPtotalTime"
+              :total-rows="totalRows"
+              :per-ptotalTime="perPtotalTime"
+              align="fill"
+              size="sm"
+              class="my-0"
+            ></b-pagination>
+          </b-col>
+        </b-row>
+      </b-collapse>
     </div>
-  </div>
+
+    <b-table
+      :items="items"
+      :fields="fields"
+      :current-ptotalTime="currentPtotalTime"
+      :per-ptotalTime="perPtotalTime"
+      :filter="filter"
+      :filter-included-fields="filterOn"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      stacked="md"
+      show-empty
+      small
+      @filtered="onFiltered"
+    >
+      <template #cell(actions)="row">
+        <b-button
+          size="sm"
+          @click="info(row.item, row.index, $event.target)"
+          class="mr-1"
+          variant="info"
+        >
+          Info
+        </b-button>
+
+        <b-button
+          size="sm"
+          variant="danger"
+          @click="deleteTimeEntry(row.item.id, row.index)"
+        >
+          Eliminar
+        </b-button>
+      </template>
+    </b-table>
+
+    <!-- Info modal -->
+    <b-modal
+      :id="infoModal.id"
+      :title="infoModal.title"
+      ok-only
+      @hide="resetInfoModal"
+    >
+      <pre>{{ infoModal.content }}</pre>
+    </b-modal>
+  </b-container>
+  <b-container class="container" v-else>
+    <div>
+      <b-jumbotron bg-variant="info" text-variant="white" border-variant="dark">
+        <template #header>Entradas de tiempo</template>
+
+        <template #lead>
+          ¡Vaya! Aun no perteneces a ninguna organización. Espera a que un
+          moderador te incluya en una.
+        </template>
+
+        <hr class="my-4" />
+      </b-jumbotron>
+    </div>
+  </b-container>
 </template>
 
 <script>
 /* eslint-disable */
-import LogTime from '../views/LogTime.vue';
+import moment from 'moment';
 import TimeEntryDataService from '../services/TimeEntryDataService';
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
-  components: {
-    LogTime,
+  filters: {
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY');
+      }
+    },
   },
 
   data() {
     return {
-      timeEntries: [],
-      currentIndex: -1,
-      date: '',
+      items: [],
+      visible: true,
+      organization: '',
+      fields: [
+        {
+          key: 'comment',
+          label: 'Comentario',
+          sortable: true,
+          sortDirection: 'desc',
+        },
+        {
+          key: 'totalTime',
+          label: 'Duracion Total',
+          sortable: true,
+          class: 'text-center',
+        },
+        {
+          key: 'date',
+          label: 'Fecha',
+          formatter: (value, key, item) => {
+            return moment(String(value)).format('DD/MM/YYYY');
+          },
+          sortable: true,
+          sortByFormatted: true,
+          filterByFormatted: true,
+        },
+        { key: 'actions', label: 'Acciones' },
+      ],
+      totalRows: 1,
+      currentPtotalTime: 1,
+      perPtotalTime: 5,
+      ptotalTimeOptions: [5, 10, 15, { value: 100, text: 'Mostrar todos' }],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: [],
+      },
     };
+  },
+
+  computed: {
+    sortOptions() {
+      return this.fields
+        .filter((f) => f.sortable)
+        .map((f) => {
+          return { text: f.label, value: f.key };
+        });
+    },
+  },
+  mounted() {
+    this.retrieveTimeEntries();
+    this.totalRows = this.items.length;
+    this.getOrganization(this.$store.state.auth.user.id);
   },
 
   methods: {
     retrieveTimeEntries() {
       TimeEntryDataService.getAll()
         .then((response) => {
-          this.timeEntries = response.data;
+          this.items = response.data;
           console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    deleteTimeEntry() {
-      TimeEntryDataService.delete(this.currentTimeEntry.id)
+    getOrganization(id) {
+      OrganizationDataService.findByUserId(id)
+        .then((response) => {
+          this.organization = response.data;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    deleteTimeEntry(id, index) {
+      TimeEntryDataService.delete(id)
         .then((response) => {
           console.log(response.data);
-          this.$router.push({ name: 'timeEntries' });
+          this.items.splice(index, 1);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-  },
-  mounted() {
-    this.retrieveTimeEntries();
+    info(item, index, button) {
+      this.infoModal.title = `Entrada del día : ${moment(
+        String(item.date)
+      ).format('DD/MM/YYYY')}`;
+      this.infoModal.content =
+        'Fecha Comienzo: ' +
+        item.startTime +
+        '\n' +
+        'Fecha Fin: ' +
+        item.endTime +
+        '\n' +
+        'Duración Total: ' +
+        item.totalTime +
+        '\n' +
+        'Comentario: ' +
+        item.comment;
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button);
+    },
+    resetInfoModal() {
+      this.infoModal.title = '';
+      this.infoModal.content = '';
+    },
+    onFiltered(filteredItems) {
+      this.totalRows = filteredItems.length;
+      this.currentPtotalTime = 1;
+    },
   },
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
-  <div class="container">
+  <b-container class="container" v-if="organization">
     <b-card
+      v-if="showAlert"
       bg-variant="danger"
       text-variant="white"
       header="Aviso Organización"
@@ -12,18 +13,34 @@
     <div>
       <b-jumbotron>
         <template #header>Mi organización</template>
+        <template #lead>
+          <h6>Nombre organización: {{ organization.name }}</h6>
+          <h6>Desripción: {{ organization.description }}</h6>
+          <h6>Url: {{ organization.url }}</h6>
+          <h6>Número teléfono: {{ organization.phoneNumber }}</h6>
+          <h6>País: {{ organization.country }}</h6>
+          <h6>Provincia: {{ organization.province }}</h6>
+          <h6>Ciudad: {{ organization.city }}</h6>
+        </template>
+        <hr class="my-4" />
+      </b-jumbotron>
+    </div>
+    
+  </b-container>
+  <b-container class="container" v-else>
+    <div>
+      <b-jumbotron bg-variant="info" text-variant="white" border-variant="dark">
+        <template #header>Usuario</template>
 
         <template #lead>
-          This is a simple hero unit, a simple jumbotron-style component for
-          calling extra attention to featured content or information.
+          ¡Vaya! Aun no perteneces a ninguna organización. Espera a que un
+          moderador te incluya en una
         </template>
 
         <hr class="my-4" />
-
-        <p>Descripción:</p>
       </b-jumbotron>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -37,6 +54,7 @@ export default {
       currentUser: [],
       organization: [],
       content: '',
+      showAlert: false,
     };
   },
   mounted() {

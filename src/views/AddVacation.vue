@@ -25,7 +25,7 @@
           v-model="vacation.startDate"
           placeholder="Date"
           v-validate="'required'"
-         context="calculateDate"
+          @change="calculateDate"
         >
         </b-form-input>
         <div v-if="errors.has('startDate')" class="alert alert-danger">
@@ -42,7 +42,7 @@
           v-model="vacation.endDate"
           placeholder="Date"
           v-validate="'required'"
-          context="calculateDate"
+          @change="calculateDate"
         >
         </b-form-input>
         <div v-if="errors.has('endDate')" class="alert alert-danger">

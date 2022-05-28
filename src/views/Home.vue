@@ -3,7 +3,10 @@
     <div class="text-center">
       <b-img :src="require('@/assets/logo.png')" class="logo" />
     </div>
-    <b-row>
+    <b-row v-if="this.$store.state.auth.user">
+      <h1 class="text-white-50 mx-auto mt-2 mb-4">¡Bienvenido!</h1>
+    </b-row>
+    <b-row v-else>
       <b-col lg="6" md="12" class="text-center center homepage-col">
         <h2 class="text-white-50 mx-auto mt-2 mb-4">
           Registrate en la aplicación como usuario para que un moderador pueda
@@ -23,6 +26,7 @@
         >
       </b-col>
     </b-row>
+
     <b-row>
       <b-col lg="6" md="12" class="text-center center homepage-col">
         <h2 class="text-white-50 mx-auto mt-2 mb-4">
@@ -49,7 +53,11 @@
 </template>
 
 <script>
+export default {
+  name: 'home',
+};
 </script>
+
 
 <style scoped>
 .masthead {
