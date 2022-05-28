@@ -1,26 +1,20 @@
 <template>
   <b-container class="container">
     <b-row align-h="center" class="mt-5">
-      <h3>Organizaciones</h3>
+      <h3>Alertas</h3>
     </b-row>
 
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
-        <router-link :to="{ name: 'add-organization' }" v-if="isAdmin">
-          <b-button size="md" class="btn btn-success"
-            >Añadir</b-button
-          ></router-link
-        >
-
         <b-input-group>
           <b-form-input
-            v-model="searchText"
+            v-model="searchName"
             size="md"
             class="search-input"
             placeholder="Buscar organización."
           ></b-form-input>
           <b-input-group-append>
-            <b-button @click="searchName" size="md" class="search-b">
+            <b-button @click="searchByName" size="md" class="search-b">
               <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
@@ -33,23 +27,42 @@
         <b-thead>
           <b-tr>
             <b-th>Nombre</b-th>
-            <b-th>Dirección</b-th>
+            <b-th>Descripción</b-th>
+            <b-th>Fecha creación</b-th>
+                        <b-th>Organizacion</b-th>
+
+            <b-th>Mostrar</b-th>
             <b-th>Acción</b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
-          <b-tr v-for="(item, index) in organizations" :key="index">
+          <b-tr v-for="(item, index) in alerts" :key="index">
             <b-td style="vertical-align: middle">
               <span>{{ item.name }}</span>
             </b-td>
-            <b-td style="vertical-align: middle">{{
-              item.province + ', ' + item.city + ', ' + item.country
-            }}</b-td>
+            <b-td style="vertical-align: middle">{{ item.description }}</b-td>
+            <b-td style="vertical-align: middle">{{ item.f_alta | dataFormat }}</b-td>
+                        <b-td style="vertical-align: middle">{{ item.f_alta }}</b-td>
 
             <b-td style="vertical-align: middle">
-              <router-link :to="'/organizations/' + item.id">
-                <b-button class="btn btn-info">Ver </b-button>
-              </router-link>
+              <b-input-group-append v-if="item.show == false">
+                <b-button @click="showAlert(item, true, index)">
+                  <font-awesome-icon icon="fa-solid fa-eye" />
+                </b-button>
+              </b-input-group-append>
+
+              <b-input-group-append v-else>
+                <b-button @click="showAlert(item, false, index)">
+                  <font-awesome-icon icon="fa-solid fa-eye-slash" />
+                </b-button>
+              </b-input-group-append>
+            </b-td>
+            <b-td style="vertical-align: middle">
+              <b-button
+                class="btn btn-danger"
+                @click="deleteAlert(item.id, index)"
+                >Eliminar
+              </b-button>
             </b-td>
           </b-tr>
         </b-tbody>
@@ -59,71 +72,93 @@
 </template>
 
 <script>
-import OrganizationDataService from '../services/OrganizationDataService';
+import AlertDataService from '../services/AlertDataService';
 import UserService from '../services/user.service';
+import moment from 'moment';
 export default {
-  name: 'organizations',
+  name: 'alerts',
   data() {
     return {
-      organizations: [],
-      searchText: '',
-      modOrg: [],
+      alerts: [],
+      searchName: '',
+      org: [],
     };
   },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    },
-    isAdmin() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN');
+  filters: {
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY HH:mm');
       }
-
-      return false;
     },
   },
   methods: {
-    retrieveOrganizations() {
-      OrganizationDataService.getAll()
+    mounted() {
+      this.retrieveAlerts();
+    },
+    retrieveAlerts() {
+      AlertDataService.getAll()
         .then((response) => {
-          this.organizations = response.data;
+          this.alerts = response.data;
+          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    /* retrieveModsByOrg(id) {
-      UserService.moderadoresByOrganization(id)
-        .then((response) => {
-          let res = response.data;
-          for (const mod of res) {
-            this.modOrg.push(mod);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },*/
 
-    refreshList() {
-      this.retrieveOrganizations();
-    },
-    getName: function (id) {
-      this.retrieveModsByOrg(id);
-      return this.modOrg;
-    },
-    searchName() {
-      OrganizationDataService.findByName(this.searchText)
+    retrieveModsByOrg(id) {
+      OrganizationService.moderadoresByAlert(id)
         .then((response) => {
-          this.organizations = response.data;
+          this.org = response.data;
+          console.log(org);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    refreshList() {
+      this.retrieveAlerts();
+    },
+    searchByName() {
+      AlertDataService.findByName(this.searchName)
+        .then((response) => {
+          this.alerts = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    showAlert(item, status, index) {
+      var data = {
+        id: item.id,
+        title: item.name,
+        description: item.description,
+        show: status,
+      };
+      AlertDataService.update(item.id, data)
+        .then((response) => {
+          let replacementItem = response.data;
+          this.alerts.splice(index, 1, replacementItem)
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    deleteAlert(id, index) {
+      AlertDataService.delete(id)
+        .then((response) => {
+          this.alerts.splice(index, 1);
+          console.log(newalert);
         })
         .catch((e) => {
           console.log(e);
         });
     },
   },
+
   mounted() {
-    this.retrieveOrganizations();
+    this.retrieveAlerts();
   },
 };
 </script>
