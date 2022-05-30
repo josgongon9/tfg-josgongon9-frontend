@@ -12,6 +12,10 @@ class OrganizationDataService {
     return axios.get(API_URL+`${id}`, { headers: authHeader() });
   }
 
+  findByUserId(idUser) {
+    return axios.get(API_URL+`findByUserId?idUser=${idUser}`, { headers: authHeader() });
+  }
+
   create(data) {
     return axios.post(API_URL+"add", data, { headers: authHeader() });
   }
@@ -30,6 +34,10 @@ class OrganizationDataService {
 
   updateUsers(id, idUser) {
     return axios.put(API_URL+"updateUsers?"+`id=${id}`+`&idUser=${idUser}`, idUser, { headers: authHeader() });
+  }
+
+  updateMods(id, idUser) {
+    return axios.put(API_URL+"updateMods?"+`id=${id}`+`&idUser=${idUser}`, idUser, { headers: authHeader() });
   }
 }
 

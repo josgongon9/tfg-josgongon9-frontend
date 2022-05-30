@@ -1,42 +1,55 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>josgongon</a>
+      <a href class="navbar-brand" @click.prevent>josgongon9</a>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
-            <font-awesome-icon icon="home" />Home
+            <font-awesome-icon icon="home" />Inicio
           </router-link>
         </li>
-        <li v-if="showAdminBoard" class="nav-item">
-          <router-link to="/admin" class="nav-link">Panel administrador</router-link>
+        <li v-if="isAdmin" class="nav-item">
+          <router-link to="/admin" class="nav-link"
+            >Panel administrador</router-link
+          >
         </li>
-        <li v-if="showModeratorBoard" class="nav-item">
+        <li v-if="isAdmin" class="nav-item">
+          <router-link to="/alerts" class="nav-link">Alertas</router-link>
+        </li>
+        <li v-if="isMod" class="nav-item">
           <router-link to="/mod" class="nav-link">Panel Moderador</router-link>
         </li>
-        <li v-if="showModeratorBoard" class="nav-item">
-          <router-link to="/organizations" class="nav-link">Organizaciones</router-link>
+        <li v-if="isMod" class="nav-item">
+          <router-link to="/organizations" class="nav-link"
+            >Organizaciones</router-link
+          >
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/user" class="nav-link">Usuario</router-link>
+          <router-link v-if="currentUser" to="/user" class="nav-link"
+            >Usuario</router-link
+          >
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/time-entries" class="nav-link">Control Horario</router-link>
+          <router-link v-if="currentUser" to="/time-entries" class="nav-link"
+            >Control Horario</router-link
+          >
         </li>
         <li class="nav-item">
-          <router-link v-if="currentUser" to="/vacations" class="nav-link">Vacaciones</router-link>
+          <router-link v-if="currentUser" to="/vacations" class="nav-link"
+            >Vacaciones</router-link
+          >
         </li>
       </div>
 
       <div v-if="!currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/register" class="nav-link">
-            <font-awesome-icon icon="user-plus" />Sign Up
+            <font-awesome-icon icon="user-plus" />Registro
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/login" class="nav-link">
-            <font-awesome-icon icon="sign-in-alt" />Login
+            <font-awesome-icon icon="sign-in-alt" />Identificarse
           </router-link>
         </li>
       </div>
@@ -50,7 +63,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt" />LogOut
+            <font-awesome-icon icon="sign-out-alt" />Cerrar Sesión
           </a>
         </li>
       </div>
@@ -66,38 +79,38 @@
 </template>
 
 <script>
-import Footer from './views/Footer.vue'
+import Footer from './views/Footer.vue';
 
 export default {
   name: 'about',
   components: {
-    Footer
+    Footer,
   },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
     },
-    showAdminBoard() {
+    isAdmin() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_ADMIN');
       }
 
       return false;
     },
-    showModeratorBoard() {
+    isMod() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_MODERATOR');
       }
 
       return false;
-    }
+    },
   },
   methods: {
     logOut() {
       this.$store.dispatch('auth/logout');
       this.$router.push('/login');
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -106,6 +119,4 @@ export default {
   position: relative;
   min-height: 100vh;
 }
-
-
 </style>

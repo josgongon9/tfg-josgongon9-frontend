@@ -40,7 +40,7 @@
         <div class="form-group">
           <button class="btn btn-primary btn-block" :disabled="loading">
             <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-            <span>Login</span>
+            <span>Continuar</span>
           </button>
         </div>
         <div class="form-group">
@@ -70,7 +70,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push('/profile');
+      this.$router.push('/home');
     }
   },
   methods: {
@@ -85,7 +85,7 @@ export default {
         if (this.user.username && this.user.password) {
           this.$store.dispatch('auth/login', this.user).then(
             () => {
-              this.$router.push('/profile');
+              this.$router.push('/home');
             },
             error => {
               this.loading = false;

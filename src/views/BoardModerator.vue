@@ -1,7 +1,7 @@
 <template>
   <b-container class="container">
     <b-row align-h="center" class="mt-5">
-      <h3>Todos los usuarios</h3>
+      <h3>Usuarios de mis organizaciones</h3>
     </b-row>
 
     <b-row align-h="center">
@@ -11,14 +11,44 @@
             v-model="searchText"
             size="md"
             class="search-input"
-            placeholder="Buscar usuario."
+            placeholder="Buscar por usuario."
           ></b-form-input>
           <b-input-group-append>
             <b-button @click="searchTitle" size="md" class="search-b">
-             <font-awesome-icon icon="search"/>
+              <font-awesome-icon icon="search" />
             </b-button>
           </b-input-group-append>
         </b-input-group>
+        <b-form>
+          <b-form-group
+            label="o Seleccione una organización:"
+            label-for="options"
+          >
+            <b-form-select
+              id="options"
+              v-validate="'required'"
+              name="options"
+              v-model="selected"
+            >
+              <option
+                v-for="(item, index) in options"
+                :key="index"
+                v-bind:value="item.id"
+              >
+                {{ item.name }}
+              </option></b-form-select
+            >
+            <b-input-group-append>
+              <b-button
+                @click="retrieveUsersByMod(selected)"
+                size="md"
+                class="reload"
+              >
+                <font-awesome-icon icon="fas fa-redo" />
+              </b-button>
+            </b-input-group-append>
+          </b-form-group>
+        </b-form>
       </b-col>
     </b-row>
 
@@ -39,16 +69,13 @@
             </b-td>
             <b-td style="vertical-align: middle">{{ item.email }}</b-td>
             <b-td style="vertical-align: middle">
-              <b-tr v-for="(rol, a) in item.roles" :key="a">
+              <div v-for="(rol, a) in item.roles" :key="a">
                 <span>{{ rol.name | getRol }}</span>
-              </b-tr>
+              </div>
             </b-td>
             <b-td style="vertical-align: middle">
-              <router-link
-                :to="{ name: 'viewUser', params: { id: item.id } }"
-              >
+              <router-link :to="{ name: 'viewUser', params: { id: item.id } }">
                 <b-button class="btn btn-info">Ver </b-button>
-                <b-button class="btn btn-danger">Eliminar</b-button>
               </router-link>
             </b-td>
           </b-tr>
@@ -60,13 +87,15 @@
 
 <script>
 import UserService from '../services/user.service';
-
+import OrganizationDataService from '../services/OrganizationDataService';
 export default {
   name: 'Moderator',
   data() {
     return {
       items: [],
       searchText: '',
+      selected: null,
+      options: [],
     };
   },
   filters: {
@@ -81,10 +110,21 @@ export default {
     },
   },
   methods: {
-    retrieveUsers() {
-      UserService.getAllUsers()
+    retrieveOrgByUser() {
+      UserService.findById(this.$store.state.auth.user.id)
         .then((response) => {
-          this.items = response.data;
+          this.options = response.data.organizations;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    retrieveUsersByMod(idOrg) {
+      OrganizationDataService.get(idOrg)
+        .then((response) => {
+          this.items = response.data.usuarios;
           console.log(response.data);
         })
         .catch((e) => {
@@ -106,18 +146,17 @@ export default {
     },
   },
   mounted() {
-    this.retrieveUsers();
+    this.retrieveOrgByUser();
   },
 };
 </script>
 
 <style scoped>
-
 .btn-info {
-    text-align: center;
-   width: 30%;
-   margin-right: 5px;
-  }
+  text-align: center;
+  width: 50%;
+  margin-right: 5px;
+}
 .container {
   text-align: center;
 }
@@ -128,13 +167,6 @@ export default {
     padding-top: 2%;
     margin-left: 25%;
   }
-
-  .div-buttons {
-    text-align: center;
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 
 .cursiva {
@@ -142,47 +174,9 @@ export default {
   font-size: 14px;
 }
 
-.div-buttons {
-  text-align: center;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 5%;
-}
-
-.search-b {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(245, 245, 245) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
-.search-b:hover {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(233, 233, 233) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
-.search-b:focus {
-  color: rgb(104, 104, 104) !important;
-  background-color: rgb(233, 233, 233) !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 0 4px 4px 0 !important;
-  box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
-}
-
-.search-input {
-  border-radius: 4px 0px 0px 4px !important;
-  border-right: 0 !important;
-}
-
-.search-input:focus {
-  border-radius: 4px 0px 0px 4px !important;
-  border-top: 1px solid #ced4da !important;
-  border-left: 1px solid #ced4da !important;
-  border-bottom: 1px solid #ced4da !important;
-  border-right: 0 !important;
-  box-shadow: 0px 0px 1px 2px rgba(172, 172, 172, 0.432) !important;
+.reload {
+  position: relative;
+  left: 100%;
+  top: -38px;
 }
 </style>
