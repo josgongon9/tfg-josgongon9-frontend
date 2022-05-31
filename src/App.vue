@@ -24,17 +24,17 @@
             >Organizaciones</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link"
             >Usuario</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/time-entries" class="nav-link"
             >Control Horario</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/vacations" class="nav-link"
             >Vacaciones</router-link
           >
@@ -100,6 +100,25 @@ export default {
     isMod() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_MODERATOR');
+      }
+
+      return false;
+    },
+
+    isUser() {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_USER');
+      }
+
+      return false;
+    },
+
+    isAdminUser() {
+      if (this.currentUser && this.currentUser.roles) {
+        return (
+          this.currentUser.roles.includes('ROLE_USER') ||
+          this.currentUser.roles.includes('ROLE_ADMIN')
+        );
       }
 
       return false;

@@ -42,7 +42,7 @@
             </b-td>
             <b-td style="vertical-align: middle">{{ item.description }}</b-td>
             <b-td style="vertical-align: middle">{{ item.f_alta | dataFormat }}</b-td>
-                        <b-td style="vertical-align: middle">{{ item.f_alta }}</b-td>
+                        <b-td style="vertical-align: middle">{{ org[index] }}</b-td>
 
             <b-td style="vertical-align: middle">
               <b-input-group-append v-if="item.show == false">
@@ -74,6 +74,7 @@
 <script>
 import AlertDataService from '../services/AlertDataService';
 import UserService from '../services/user.service';
+import OrganizationDataService from '../services/OrganizationDataService';
 import moment from 'moment';
 export default {
   name: 'alerts',
@@ -106,8 +107,8 @@ export default {
         });
     },
 
-    retrieveModsByOrg(id) {
-      OrganizationService.moderadoresByAlert(id)
+    retrieveOrganizationsByAlert() {
+      OrganizationDataService.getOrganizationsByAlert()
         .then((response) => {
           this.org = response.data;
           console.log(org);
@@ -123,7 +124,6 @@ export default {
       AlertDataService.findByName(this.searchName)
         .then((response) => {
           this.alerts = response.data;
-          console.log(response.data);
         })
         .catch((e) => {
           console.log(e);
@@ -159,6 +159,7 @@ export default {
 
   mounted() {
     this.retrieveAlerts();
+    this.retrieveOrganizationsByAlert();
   },
 };
 </script>
