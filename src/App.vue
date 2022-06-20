@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>josgongon9</a>
+    <b-navbar class="navbar navbar-expand navbar-dark bg-dark">
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
@@ -67,7 +66,7 @@
           </a>
         </li>
       </div>
-    </nav>
+   </b-navbar>
 
     <div class="container">
       <router-view />

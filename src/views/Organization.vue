@@ -1,6 +1,6 @@
 <template>
   <div class="submit-form">
-    <b-form v-if="!submitted" @submit.prevent="handleSubmit">
+    <b-form v-if="!submitted">
       <b-form-group label="Nombre:" label-for="name">
         <b-form-input
           class="form-control"
@@ -106,7 +106,7 @@
 
       <div class="button-org">
         <b-button-group>
-          <b-button type="submit" variant="success">Actualizar</b-button>
+          <b-button  @click="updateOrganization"  variant="success">Actualizar</b-button>
           <b-button v-b-modal.modal-1>Gestionar usuarios</b-button>
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
           <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>

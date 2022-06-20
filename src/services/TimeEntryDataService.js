@@ -8,6 +8,10 @@ class TimeEntryDataService {
     return axios.get(API_URL + "timeEntries", { headers: authHeader() });
   }
 
+  getByUserId(idUser) {
+    return axios.get(API_URL + `timeEntriesByUser?idUser=${idUser}`, { headers: authHeader() });
+  }
+
   getTimeEntryNow(idUser) {
     return axios.get(API_URL + `nowTimeEntry?idUser=${idUser}`, { headers: authHeader() });
   }

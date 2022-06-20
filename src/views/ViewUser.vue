@@ -450,7 +450,7 @@ export default {
         });
     },
     retrieveTimeEntries() {
-      TimeEntryDataService.getAll()
+      TimeEntryDataService.getByUserId(this.$route.params.id)
         .then((response) => {
           this.items = response.data;
           console.log(response.data);
