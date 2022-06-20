@@ -12,6 +12,14 @@ class OrganizationDataService {
     return axios.get(API_URL+`${id}`, { headers: authHeader() });
   }
 
+  getUserInOtherOrg(idUser,idOrg) {
+    return axios.get(API_URL+`userOtherOrg?idUser=${idUser}`+`&idOrg=${idOrg}`, { headers: authHeader() });
+  }
+
+  getOrganizationsByAlert() {
+    return axios.get(API_URL+`organizationsByAlert`, { headers: authHeader() });
+  }
+
   findByUserId(idUser) {
     return axios.get(API_URL+`findByUserId?idUser=${idUser}`, { headers: authHeader() });
   }

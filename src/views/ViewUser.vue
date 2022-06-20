@@ -68,7 +68,7 @@
                   id="input-1"
                   v-model="currentUser.daysOfVacations"
                   name="daysOfVacations"
-                  :disabled="isAdmin != true"
+                  :disabled="editVacation == true"
                   min="1"
                   max="100"
                 ></b-form-spinbutton>
@@ -93,12 +93,14 @@
                     <b-button type="submit" class="btn btn-success mt-2"
                       ><font-awesome-icon icon="save" /> Guardar Cambios </b-button
                     >&nbsp;
-                    <b-button
-                      class="btn btn-danger mt-2"
-                      v-on:click="deleteUser()"
-                      ><font-awesome-icon icon="trash-alt" /> Borrar
-                      Usuario</b-button
-                    >
+                    <div v-if="isAdmin">
+                      <b-button
+                        class="btn btn-danger mt-2"
+                        v-on:click="deleteUser()"
+                        ><font-awesome-icon icon="trash-alt" /> Borrar
+                        Usuario</b-button
+                      >
+                    </div>
                   </div>
                 </b-row>
               </div>
@@ -117,12 +119,248 @@
         </b-card>
       </b-col>
     </b-row>
+    <b-card-group>
+      <b-card
+        v-if="timeEntriesNow"
+        border-variant="info"
+        header="Horas Imputadas hoy"
+        align="center"
+      >
+        <b-card-text> {{ timeEntriesNow }}</b-card-text>
+      </b-card>
+      <b-card
+        v-else
+        border-variant="danger"
+        header="Horas Imputadas hoy"
+        align="center"
+      >
+        <b-card-text> {{ 'Sin registros aun' }}</b-card-text>
+      </b-card>
+      <b-card
+        v-if="lastDateTimeEntries"
+        border-variant="info"
+        header="Último día imputado"
+        align="center"
+      >
+        <b-card-text> {{ lastDateTimeEntries | dataFormat }}</b-card-text>
+      </b-card>
+      <b-card
+        v-else
+        border-variant="danger"
+        header="Último día imputado"
+        align="center"
+      >
+        <b-card-text> {{ 'Sin registros aun' }}</b-card-text>
+      </b-card>
+    </b-card-group>
+    <b-card
+      v-if="lastDateTimeEntries"
+      border-variant="info"
+      header="Registro horario"
+      align="center"
+    >
+      <b-card-text>
+        <b-container fluid v-if="organization">
+          <div>
+            <b-input-group>
+              <router-link :to="{ name: 'addTimeEntries' }"
+                ><b-button size="md" class="btn btn-success"
+                  >Añadir</b-button
+                ></router-link
+              >
+              <b-button
+                :class="visible ? null : 'collapsed'"
+                :aria-expanded="visible ? 'true' : 'false'"
+                aria-controls="collapse-4"
+                @click="visible = !visible"
+                variant="primary"
+              >
+                Filtros
+              </b-button>
+            </b-input-group>
+            <b-collapse id="collapse-4" v-model="visible" class="mt-2">
+              <b-row>
+                <b-col lg="6" class="my-1">
+                  <b-form-group
+                    label="Ordenar"
+                    label-for="sort-by-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                    v-slot="{ ariaDescribedby }"
+                  >
+                    <b-input-group size="sm">
+                      <b-form-select
+                        id="sort-by-select"
+                        v-model="sortBy"
+                        :options="sortOptions"
+                        :aria-describedby="ariaDescribedby"
+                        class="w-75"
+                      >
+                        <template #first>
+                          <option value="">----</option>
+                        </template>
+                      </b-form-select>
+
+                      <b-form-select
+                        v-model="sortDesc"
+                        :disabled="!sortBy"
+                        :aria-describedby="ariaDescribedby"
+                        size="sm"
+                        class="w-25"
+                      >
+                        <option :value="false">Ascedente</option>
+                        <option :value="true">Descendente</option>
+                      </b-form-select>
+                    </b-input-group>
+                  </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1"> </b-col>
+
+                <b-col lg="6" class="my-1">
+                  <b-form-group
+                    label="Filtro"
+                    label-for="filter-input"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                  >
+                    <b-input-group size="sm">
+                      <b-form-input
+                        id="filter-input"
+                        v-model="filter"
+                        type="search"
+                        placeholder="Escriba para buscar"
+                      ></b-form-input>
+
+                      <b-input-group-append>
+                        <b-button :disabled="!filter" @click="filter = ''"
+                          >Limpiar</b-button
+                        >
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                  <b-form-group
+                    v-model="sortDirection"
+                    label="Filtro"
+                    description="Dejar todo desmarcado para obtener todos los datos"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                    v-slot="{ ariaDescribedby }"
+                  >
+                    <b-form-checkbox-group
+                      v-model="filterOn"
+                      :aria-describedby="ariaDescribedby"
+                      class="mt-1"
+                    >
+                      <b-form-checkbox value="comment"
+                        >Comentario</b-form-checkbox
+                      >
+                      <b-form-checkbox value="totalTime"
+                        >Duración Total</b-form-checkbox
+                      >
+                      <b-form-checkbox value="date">Fecha</b-form-checkbox>
+                    </b-form-checkbox-group>
+                  </b-form-group>
+                </b-col>
+
+                <b-col sm="5" md="6" class="my-1">
+                  <b-form-group
+                    label="Páginas"
+                    label-for="per-ptotalTime-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                  >
+                    <b-form-select
+                      id="per-ptotalTime-select"
+                      v-model="perPtotalTime"
+                      :options="ptotalTimeOptions"
+                      size="sm"
+                    ></b-form-select>
+                  </b-form-group>
+                </b-col>
+
+                <b-col sm="7" md="6" class="my-1">
+                  <b-pagination
+                    v-model="currentPtotalTime"
+                    :total-rows="totalRows"
+                    :per-ptotalTime="perPtotalTime"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  ></b-pagination>
+                </b-col>
+              </b-row>
+            </b-collapse>
+          </div>
+
+          <b-table
+            :items="items"
+            :fields="fields"
+            :current-ptotalTime="currentPtotalTime"
+            :per-ptotalTime="perPtotalTime"
+            :filter="filter"
+            :filter-included-fields="filterOn"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
+            :sort-direction="sortDirection"
+            stacked="md"
+            show-empty
+            small
+            @filtered="onFiltered"
+          >
+            <template #cell(actions)="row">
+              <b-button
+                size="sm"
+                @click="info(row.item, row.index, $event.target)"
+                class="mr-1"
+                variant="info"
+              >
+                Info
+              </b-button>
+
+              <b-button
+                size="sm"
+                variant="danger"
+                @click="deleteTimeEntry(row.item.id, row.index)"
+              >
+                Eliminar
+              </b-button>
+            </template>
+          </b-table>
+
+          <!-- Info modal -->
+          <b-modal
+            :id="infoModal.id"
+            :title="infoModal.title"
+            ok-only
+            @hide="resetInfoModal"
+          >
+            <pre>{{ infoModal.content }}</pre>
+          </b-modal>
+        </b-container>
+      </b-card-text>
+    </b-card>
   </b-container>
 </template>
 
 <script>
 import UserService from '../services/user.service';
 import OrganizationDataService from '../services/OrganizationDataService';
+import TimeEntryDataService from '../services/TimeEntryDataService';
+import moment from 'moment';
 export default {
   name: 'viewUser',
   data() {
@@ -134,13 +372,68 @@ export default {
       isMod: false,
       roles: [],
       organization: '',
+      timeEntriesNow: '',
+      lastDateTimeEntries: '',
+      items: [],
+      visible: true,
+      organization: '',
+      fields: [
+        {
+          key: 'comment',
+          label: 'Comentario',
+          sortable: true,
+          sortDirection: 'desc',
+        },
+        {
+          key: 'totalTime',
+          label: 'Duracion Total',
+          sortable: true,
+          class: 'text-center',
+        },
+        {
+          key: 'date',
+          label: 'Fecha',
+          formatter: (value, key, item) => {
+            return moment(String(value)).format('DD/MM/YYYY');
+          },
+          sortable: true,
+          sortByFormatted: true,
+          filterByFormatted: true,
+        },
+        { key: 'actions', label: 'Acciones' },
+      ],
+      totalRows: 1,
+      currentPtotalTime: 1,
+      perPtotalTime: 5,
+      ptotalTimeOptions: [5, 10, 15, { value: 100, text: 'Mostrar todos' }],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: [],
+      },
     };
+  },
+  filters: {
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY');
+      }
+    },
   },
 
   mounted() {
     this.getUser(this.$route.params.id);
     this.getUserRol();
     this.getOrganization(this.$route.params.id);
+    this.getTimeEntryNow();
+    this.getLastTimeEntry();
+    this.retrieveTimeEntries();
+    this.totalRows = this.items.length;
   },
   methods: {
     getUser(id) {
@@ -156,19 +449,29 @@ export default {
           console.log(e);
         });
     },
+    retrieveTimeEntries() {
+      TimeEntryDataService.getByUserId(this.$route.params.id)
+        .then((response) => {
+          this.items = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     onSubmit() {
       this.errores.pop();
       this.currentUser.roles = this.roles;
-      if(this.currentUser.roles.length > 1){
+      if (this.currentUser.roles.length > 1) {
         this.errores.push('No se permiten los multiperfilados');
-      }else{
-      UserService.update(this.currentUser.id, this.currentUser)
-        .then((response) => {
-          alert('Datos actualizados con éxito.');
-        })
-        .catch((e) => {
-          this.errores.push(e);
-        });
+      } else {
+        UserService.update(this.currentUser.id, this.currentUser)
+          .then((response) => {
+            alert('Datos actualizados con éxito.');
+          })
+          .catch((e) => {
+            this.errores.push(e);
+          });
       }
     },
     getUserRol() {
@@ -181,6 +484,63 @@ export default {
           this.isAdmin = true;
         }
       }
+    },
+    deleteTimeEntry(id, index) {
+      TimeEntryDataService.delete(id)
+        .then((response) => {
+          console.log(response.data);
+          this.items.splice(index, 1);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    info(item, index, button) {
+      this.infoModal.title = `Entrada del día : ${moment(
+        String(item.date)
+      ).format('DD/MM/YYYY')}`;
+      this.infoModal.content =
+        'Fecha Comienzo: ' +
+        item.startTime +
+        '\n' +
+        'Fecha Fin: ' +
+        item.endTime +
+        '\n' +
+        'Duración Total: ' +
+        item.totalTime +
+        '\n' +
+        'Comentario: ' +
+        item.comment;
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button);
+    },
+    resetInfoModal() {
+      this.infoModal.title = '';
+      this.infoModal.content = '';
+    },
+    onFiltered(filteredItems) {
+      this.totalRows = filteredItems.length;
+      this.currentPtotalTime = 1;
+    },
+    getTimeEntryNow() {
+      TimeEntryDataService.getTimeEntryNow(this.$route.params.id)
+        .then((response) => {
+          this.timeEntriesNow = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    getLastTimeEntry() {
+      TimeEntryDataService.getLastTimeEntry(this.$route.params.id)
+        .then((response) => {
+          this.lastDateTimeEntries = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
 
     getOrganization(id) {
@@ -213,14 +573,14 @@ export default {
     deleteUser() {
       if (
         confirm(
-          'Está a punto de eliminar su cuenta. Este proceso no tiene marcha atrás,¿Seguro que desea continuar? '
+          'Está a punto de eliminar a este usuario. Este proceso no tiene marcha atrás,¿Seguro que desea continuar? '
         )
       ) {
         UserService.delete(this.currentUser.id)
           .then((response) => {
             if (response.status == 204) {
               alert(
-                'Se ha eliminado su cuenta satisfactoriamente. será redirigido a la vista de inicio'
+                'Se ha eliminado el usuario satisfactoriamente. será redirigido a la vista de inicio'
               );
               this.$store.dispatch('auth/logout');
               this.$router.push('/login');
@@ -242,6 +602,35 @@ export default {
         return 'Administrador';
       }
     },
+  },
+  computed: {
+    editVacation() {
+      let res = false;
+      if (this.admin == true) {
+        res = true;
+      } else if (this.mod == true) {
+        res = true;
+      }
+      return res;
+    },
+    sortOptions() {
+      return this.fields
+        .filter((f) => f.sortable)
+        .map((f) => {
+          return { text: f.label, value: f.key };
+        });
+    },
+  },
+  getUserRol() {
+    let roles = this.$store.state.auth.user.roles;
+    for (const element of roles) {
+      if (element == 'ROLE_MODERATOR') {
+        this.isMod = true;
+      }
+      if (element == 'ROLE_ADMIN') {
+        this.isAdmin = true;
+      }
+    }
   },
 };
 </script>

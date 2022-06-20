@@ -20,7 +20,7 @@
             <div
               v-if="submitted && errors.has('username')"
               class="alert-danger"
-            >{{errors.first('username')}}</div>
+            >{{"El nombre de usuario es obligatorio"}}</div>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
@@ -34,7 +34,7 @@
             <div
               v-if="submitted && errors.has('email')"
               class="alert-danger"
-            >{{errors.first('email')}}</div>
+            >{{"El correo electrónico es obligatorio"}}</div>
           </div>
           <div class="form-group">
             <label for="password">Contraseña</label>
@@ -48,7 +48,7 @@
             <div
               v-if="submitted && errors.has('password')"
               class="alert-danger"
-            >{{errors.first('password')}}</div>
+            >{{"La contraseña es obligatoria"}}</div>
           </div>
           <div class="form-group">
             <button class="btn btn-primary btn-block">Registrarse</button>

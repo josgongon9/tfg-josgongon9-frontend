@@ -7,8 +7,12 @@
       header="Aviso Organización"
       class="text-center"
     >
-      <b-card-text> Aviso </b-card-text>
-      <b-button href="#" variant="primary">Cerrar</b-button>
+      <b-card-sub-title class="mb-2">
+        {{ alerts.f_alta | dataFormat }}</b-card-sub-title
+      >
+
+      <b-card-text> {{ alerts.description }} </b-card-text>
+      <b-button @click="showAlert = false" variant="primary">Cerrar</b-button>
     </b-card>
     <div>
       <b-jumbotron>
@@ -24,8 +28,60 @@
         </template>
         <hr class="my-4" />
       </b-jumbotron>
+      <b-card-group deck>
+        <b-card
+          v-if="currentUser.daysOfVacations"
+          border-variant="info"
+          header="Días vacaciones restantes"
+          align="center"
+        >
+          <b-card-text> {{ currentUser.daysOfVacations }}</b-card-text>
+        </b-card>
+        <b-card
+          v-else
+          border-variant="danger"
+          header="Días vacaciones restantes"
+          align="center"
+        >
+          <b-card-text>
+            {{ 'Sin registros aun, contacte con un Moderador' }}</b-card-text
+          >
+        </b-card>
+
+        <b-card
+          v-if="timeEntriesNow"
+          border-variant="info"
+          header="Horas Imputadas hoy"
+          align="center"
+        >
+          <b-card-text> {{ timeEntriesNow }}</b-card-text>
+        </b-card>
+        <b-card
+          v-else
+          border-variant="danger"
+          header="Horas Imputadas hoy"
+          align="center"
+        >
+          <b-card-text> {{ 'Sin registros aun' }}</b-card-text>
+        </b-card>
+        <b-card
+          v-if="lastDateTimeEntries"
+          border-variant="info"
+          header="Último día imputado"
+          align="center"
+        >
+          <b-card-text> {{ lastDateTimeEntries | dataFormat }}</b-card-text>
+        </b-card>
+        <b-card
+          v-else
+          border-variant="danger"
+          header="Último día imputado"
+          align="center"
+        >
+          <b-card-text> {{ 'Sin registros aun' }}</b-card-text>
+        </b-card>
+      </b-card-group>
     </div>
-    
   </b-container>
   <b-container class="container" v-else>
     <div>
@@ -46,6 +102,9 @@
 <script>
 import UserService from '../services/user.service';
 import OrganizationDataService from '../services/OrganizationDataService';
+import AlertDataService from '../services/AlertDataService';
+import TimeEntryDataService from '../services/TimeEntryDataService';
+import moment from 'moment';
 export default {
   name: 'User',
   data() {
@@ -55,11 +114,23 @@ export default {
       organization: [],
       content: '',
       showAlert: false,
+      alerts: [],
+      timeEntriesNow: '',
+      lastDateTimeEntries: '',
     };
+  },
+  filters: {
+    dataFormat: function (value) {
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY');
+      }
+    },
   },
   mounted() {
     this.getUser(this.$store.state.auth.user.id);
     this.getOrganization(this.$store.state.auth.user.id);
+    this.getTimeEntryNow();
+    this.getLastTimeEntry();
   },
   methods: {
     getUser(id) {
@@ -71,10 +142,46 @@ export default {
           console.log(e);
         });
     },
+
+    getTimeEntryNow() {
+      TimeEntryDataService.getTimeEntryNow(this.$store.state.auth.user.id)
+        .then((response) => {
+          this.timeEntriesNow = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
+    getLastTimeEntry() {
+      TimeEntryDataService.getLastTimeEntry(this.$store.state.auth.user.id)
+        .then((response) => {
+          this.lastDateTimeEntries = response.data;
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+
     getOrganization(id) {
       OrganizationDataService.findByUserId(id)
         .then((response) => {
           this.organization = response.data;
+          this.getAllByOrg(this.organization.id);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    getAllByOrg(id) {
+      AlertDataService.getShowByOrg(id)
+        .then((response) => {
+          this.alerts = response.data;
+          if (response.status == 200) {
+            this.showAlert = true;
+          }
         })
         .catch((e) => {
           console.log(e);
