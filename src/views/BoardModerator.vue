@@ -6,22 +6,9 @@
 
     <b-row align-h="center">
       <b-col sm="12" md="10" lg="8" xl="6" class="mb-2">
-        <b-input-group>
-          <b-form-input
-            v-model="searchText"
-            size="md"
-            class="search-input"
-            placeholder="Buscar por usuario."
-          ></b-form-input>
-          <b-input-group-append>
-            <b-button @click="searchTitle" size="md" class="search-b">
-              <font-awesome-icon icon="search" />
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
         <b-form>
           <b-form-group
-            label="o Seleccione una organización:"
+            label="Seleccione una organización:"
             label-for="options"
           >
             <b-form-select

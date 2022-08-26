@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a href class="navbar-brand" @click.prevent>josgongon9</a>
+    <b-navbar class="navbar navbar-expand navbar-dark bg-dark">
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
@@ -24,17 +23,17 @@
             >Organizaciones</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/user" class="nav-link"
             >Usuario</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/time-entries" class="nav-link"
             >Control Horario</router-link
           >
         </li>
-        <li class="nav-item">
+        <li v-if="isAdminUser" class="nav-item">
           <router-link v-if="currentUser" to="/vacations" class="nav-link"
             >Vacaciones</router-link
           >
@@ -67,7 +66,7 @@
           </a>
         </li>
       </div>
-    </nav>
+   </b-navbar>
 
     <div class="container">
       <router-view />
@@ -100,6 +99,25 @@ export default {
     isMod() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_MODERATOR');
+      }
+
+      return false;
+    },
+
+    isUser() {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_USER');
+      }
+
+      return false;
+    },
+
+    isAdminUser() {
+      if (this.currentUser && this.currentUser.roles) {
+        return (
+          this.currentUser.roles.includes('ROLE_USER') ||
+          this.currentUser.roles.includes('ROLE_ADMIN')
+        );
       }
 
       return false;

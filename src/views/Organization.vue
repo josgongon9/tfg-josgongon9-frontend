@@ -1,6 +1,6 @@
 <template>
   <div class="submit-form">
-    <b-form v-if="!submitted" @submit.prevent="handleSubmit">
+    <b-form v-if="!submitted">
       <b-form-group label="Nombre:" label-for="name">
         <b-form-input
           class="form-control"
@@ -106,7 +106,7 @@
 
       <div class="button-org">
         <b-button-group>
-          <b-button type="submit" variant="success">Actualizar</b-button>
+          <b-button  @click="updateOrganization"  variant="success">Actualizar</b-button>
           <b-button v-b-modal.modal-1>Gestionar usuarios</b-button>
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
           <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>
@@ -178,7 +178,10 @@
                     style="vertical-align: middle"
                     v-if="getContainsUser(item) == false"
                   >
-                    <b-button class="btn btn-info" @click="addUsers(item.id)"
+                    <b-button
+                      :disabled="getUserInOtherOrg(index)"
+                      class="btn btn-info"
+                      @click="addUsers(item.id)"
                       >Añadir
                     </b-button>
                   </b-td>
@@ -392,6 +395,7 @@ export default {
       alerts: [],
       searchName: '',
       searchModText: '',
+      userOrg: [],
     };
   },
   filters: {
@@ -519,6 +523,39 @@ export default {
       return res;
     },
 
+    /*getUserInOtherOrg(idUser, index) {
+      console.log('DISABLE');
+      OrganizationDataService.getUserInOtherOrg(
+        idUser,
+        this.organization.id
+      ).then((response) => {
+        this.userOrg.push(response.data);
+        console.log('LLAMADA');
+      });
+      console.log('inidce');
+      console.log(index);
+      let val = false;
+      if (this.userOrg[index] == true) {
+        val = true;
+      }
+      return val;
+    },*/
+
+    getUserInOtherOrg(index) {
+      let val = false;
+      if (this.userOrg[index] == true) {
+        val = true;
+      }
+      return val;
+    },
+    getUserInOtherOrgBBDD() {
+      OrganizationDataService.getUserInOtherOrg(this.organization.id).then(
+        (response) => {
+          this.userOrg = response.data;
+        }
+      );
+    },
+
     getContainsMod(mod, index) {
       let res = mod.organizations.some(
         (organization) => organization.id === this.$route.params.id
@@ -569,6 +606,7 @@ export default {
     this.retrieveMods();
     this.retrieveUsers();
     this.retrieveAlerts();
+    this.getUserInOtherOrgBBDD();
   },
   computed: {
     countries() {
