@@ -1,6 +1,6 @@
 <template>
   <div class="submit-form">
-    <b-form v-if="!submitted">
+    <b-form v-if="!submitted" @submit.prevent="handleSubmit">
       <b-form-group label="Nombre:" label-for="name">
         <b-form-input
           class="form-control"
@@ -106,7 +106,7 @@
 
       <div class="button-org">
         <b-button-group>
-          <b-button  @click="updateOrganization"  variant="success">Actualizar</b-button>
+          <b-button type="submit" variant="success">Actualizar</b-button>
           <b-button v-b-modal.modal-1>Gestionar usuarios</b-button>
           <b-button v-b-modal.modal-2>Gestionar Moderadores</b-button>
           <b-button v-b-modal.modal-3>Gestionar Alertas</b-button>
@@ -357,9 +357,7 @@
 
     <b-form v-else>
       <h4>Organización actualizada correctamente!</h4>
-      <button class="btn btn-success" @click="newOrganization">
-        Crear otra organización
-      </button>
+      <button class="btn btn-info" @click="newOrganization">Volver</button>
     </b-form>
     <div class="mt-4" v-if="errores && errores.length">
       <b-alert
@@ -415,6 +413,15 @@ export default {
     },
   },
   methods: {
+    handleSubmit() {
+      this.errores.pop();
+      this.message = '';
+      this.$validator.validate().then((valid) => {
+        if (valid) {
+          this.updateOrganization();
+        }
+      });
+    },
     addUsers(idUser) {
       OrganizationDataService.updateUsers(this.organization.id, idUser)
         .then((response) => {
@@ -500,10 +507,11 @@ export default {
     updateOrganization() {
       OrganizationDataService.update(this.organization.id, this.organization)
         .then((response) => {
-          this.message = '¡La organización se ha actualizado correctamente!';
+          console.log(response.data);
+          this.submitted = true;
         })
         .catch((e) => {
-          console.log(e);
+          this.errores.push(e.response.data);
         });
     },
     deleteOrganization() {
