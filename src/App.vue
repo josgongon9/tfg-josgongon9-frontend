@@ -18,7 +18,7 @@
         <li v-if="isMod" class="nav-item">
           <router-link to="/mod" class="nav-link">Panel Moderador</router-link>
         </li>
-        <li v-if="isMod" class="nav-item">
+        <li v-if="isAdminMod" class="nav-item">
           <router-link to="/organizations" class="nav-link"
             >Organizaciones</router-link
           >
@@ -116,6 +116,17 @@ export default {
       if (this.currentUser && this.currentUser.roles) {
         return (
           this.currentUser.roles.includes('ROLE_USER') ||
+          this.currentUser.roles.includes('ROLE_ADMIN')
+        );
+      }
+
+      return false;
+    },
+
+      isAdminMod() {
+      if (this.currentUser && this.currentUser.roles) {
+        return (
+          this.currentUser.roles.includes('ROLE_MODERATOR') ||
           this.currentUser.roles.includes('ROLE_ADMIN')
         );
       }
