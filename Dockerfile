@@ -24,11 +24,5 @@ RUN npm run build
 # We use a varibale here as the port is something that can differ on the environment.
 EXPOSE $PORT
 
-# Set the base url
-ENV PROXY_API=$PROXY_API
-
-# Set the browser base url
-ENV PROXY_LOGIN=$PROXY_LOGIN
-
 # Start the app
 CMD ["npm", "run", "serve"]
