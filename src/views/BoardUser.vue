@@ -30,7 +30,7 @@
       </b-jumbotron>
       <b-card-group deck>
         <b-card
-          v-if="currentUser.daysOfVacations"
+          v-if="currentUser.daysOfVacations !== null" 
           border-variant="info"
           header="Días vacaciones restantes"
           align="center"

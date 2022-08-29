@@ -23,10 +23,11 @@ footer {
   background-color: #5f5a5a;
   bottom: 0;
   left: 0;
-  position: fixed;
+  position: static;
   padding: 1rem;
   width: 100%;
   text-align: center;
+  
 }
 
 

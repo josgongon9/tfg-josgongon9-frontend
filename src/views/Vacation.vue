@@ -104,7 +104,7 @@ export default {
       VacationDataService.update(this.currentVacation.id, this.currentVacation)
         .then((response) => {
           console.log(response.data);
-          this.message = 'The vacation was updated successfully!';
+          this.message = '¡Vacaciones actualizadas correctamente!';
         })
         .catch((e) => {
           console.log(e);

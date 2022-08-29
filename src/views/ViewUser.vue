@@ -353,6 +353,69 @@
         </b-container>
       </b-card-text>
     </b-card>
+
+    <b-card
+      v-if="vacations"
+      border-variant="info"
+      header="Vacaciones"
+      align="center"
+    >
+      <b-card-text>
+        <b-container fluid v-if="organization">
+          <div>
+            <b-collapse id="collapse-4" v-model="visible" class="mt-2">
+              <b-row>
+                <b-table-simple striped responsive>
+                  <b-thead>
+                    <b-tr>
+                      <b-th>Título</b-th>
+                      <b-th>Descripción</b-th>
+                      <b-th>Fecha de Inicio</b-th>
+                      <b-th>Fecha de Fin</b-th>
+                      <b-th>Días totales</b-th>
+                      <b-th>Acción</b-th>
+                    </b-tr>
+                  </b-thead>
+                  <b-tbody>
+                    <b-tr v-for="(vac, index) in vacations" :key="index">
+                      <b-td style="vertical-align: middle">
+                        <span>{{ vac.title }}</span>
+                      </b-td>
+                      <b-td style="vertical-align: middle">{{
+                        vac.description
+                      }}</b-td>
+                      <b-td style="vertical-align: middle">
+                        <span>{{ vac.startDate | dataFormat }}</span>
+                      </b-td>
+                      <b-td style="vertical-align: middle">
+                        <span>{{ vac.endDate | dataFormat }}</span>
+                      </b-td>
+                      <b-td style="vertical-align: middle">
+                        <span>
+                          {{ calculateDate(vac.startDate, vac.endDate) }}</span
+                        >
+                      </b-td>
+                      <b-td style="vertical-align: middle">
+                        <b-button
+                          size="sm"
+                          variant="danger"
+                          @click="deleteVacation(vac.id, index)"
+                        >
+                          Eliminar
+                        </b-button>
+                      </b-td>
+                    </b-tr>
+                  </b-tbody>
+                </b-table-simple>
+              </b-row>
+            </b-collapse>
+          </div>
+        </b-container>
+      </b-card-text>
+    </b-card>
+    <b-card v-else border-variant="info" header="Vacaciones" align="center">
+      <b-card-text> {{ 'Sin registros aun' }}</b-card-text></b-card
+    >
   </b-container>
 </template>
 
@@ -360,12 +423,14 @@
 import UserService from '../services/user.service';
 import OrganizationDataService from '../services/OrganizationDataService';
 import TimeEntryDataService from '../services/TimeEntryDataService';
+import VacationDataService from '../services/VacationDataService';
 import moment from 'moment';
 export default {
   name: 'viewUser',
   data() {
     return {
       errores: [],
+      vacations: [],
       currentUser: [],
       show: true,
       isAdmin: false,
@@ -433,9 +498,25 @@ export default {
     this.getTimeEntryNow();
     this.getLastTimeEntry();
     this.retrieveTimeEntries();
+    this.retrieveVacations();
     this.totalRows = this.items.length;
   },
   methods: {
+    calculateDate(date1, date2) {
+      let startDate = moment(date1);
+      let endDate = moment(date2);
+      let count = 0;
+      let curDate = +startDate;
+      while (curDate <= +endDate) {
+        const dayOfWeek = new Date(curDate).getDay();
+        const isWeekend = dayOfWeek === 6 || dayOfWeek === 0;
+        if (!isWeekend) {
+          count++;
+        }
+        curDate = curDate + 24 * 60 * 60 * 1000;
+      }
+      return Math.round(count);
+    },
     getUser(id) {
       UserService.findById(id)
         .then((response) => {
@@ -454,6 +535,15 @@ export default {
         .then((response) => {
           this.items = response.data;
           console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    retrieveVacations() {
+      VacationDataService.getAllByUser(this.$route.params.id)
+        .then((response) => {
+          this.vacations = response.data;
         })
         .catch((e) => {
           console.log(e);
@@ -490,6 +580,16 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.items.splice(index, 1);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    deleteVacation(id, index) {
+      VacationDataService.delete(id)
+        .then((response) => {
+          console.log(response.data);
+          this.vacations.splice(index, 1);
         })
         .catch((e) => {
           console.log(e);
