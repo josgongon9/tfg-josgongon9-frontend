@@ -179,7 +179,7 @@ export default {
       AlertDataService.getShowByOrg(id)
         .then((response) => {
           this.alerts = response.data;
-          if (response.status == 200) {
+          if (this.alerts.id != null) {
             this.showAlert = true;
           }
         })
